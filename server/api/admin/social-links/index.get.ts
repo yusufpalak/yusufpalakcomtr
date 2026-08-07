@@ -1,0 +1,1 @@
+import {asc} from 'drizzle-orm';import {socialLinks} from '../../../database/schema';export default defineEventHandler(async event=>{await requireAdmin(event);return ok(await useDb().select().from(socialLinks).orderBy(asc(socialLinks.sortOrder)))})

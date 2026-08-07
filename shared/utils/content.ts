@@ -1,0 +1,3 @@
+export const slugify=(value:string)=>value.trim().toLocaleLowerCase('tr-TR').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+export const readingTime=(html:string,wordsPerMinute=200)=>Math.max(1,Math.ceil(html.replace(/<[^>]*>/g,' ').trim().split(/\s+/).filter(Boolean).length/wordsPerMinute))
+export const isPublicPost=(status:string,publishedAt:Date|null,now=new Date())=>status==='published'&&!!publishedAt&&publishedAt<=now||status==='scheduled'&&!!publishedAt&&publishedAt<=now

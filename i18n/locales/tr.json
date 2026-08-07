@@ -1,0 +1,192 @@
+{
+  "site": {
+    "description": "Güvenilir dijital ürünler tasarlayan full-stack geliştirici."
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "about": "Hakkımda",
+    "portfolio": "Portfolyo",
+    "blog": "Blog",
+    "certificates": "Sertifikalar",
+    "contact": "İletişim"
+  },
+  "a11y": {
+    "skipContent": "İçeriğe geç",
+    "openMenu": "Menüyü aç",
+    "mainMenu": "Ana menü",
+    "lightTheme": "Açık temaya geç",
+    "darkTheme": "Koyu temaya geç",
+    "languageSwitcher": "Dil seçimi",
+    "socialLinks": "Sosyal medya bağlantıları"
+  },
+  "footer": {
+    "tagline": "Güvenilir dijital ürünler tasarlayan full-stack geliştirici.",
+    "privacy": "Gizlilik",
+    "cookies": "Çerezler",
+    "terms": "Koşullar"
+  },
+  "common": {
+    "project": "Proje",
+    "featured": "Öne çıkan",
+    "current": "Devam ediyor",
+    "technical": "Teknik",
+    "year": "yıl",
+    "minuteShort": "dk",
+    "dateSeparator": "—"
+  },
+  "home": {
+    "location": "İSTANBUL",
+    "fallbackTitle": "Fikirleri sağlam dijital ürünlere dönüştürüyorum.",
+    "fallbackIntro": "Merhaba, ben {name}. Web geliştirme, backend sistemleri, veritabanı ve DevOps alanlarında hızlı, güvenli ve sürdürülebilir çözümler geliştiriyorum.",
+    "viewProjects": "Projelerimi incele",
+    "contact": "İletişime geç",
+    "downloadCv": "CV indir",
+    "socialProfiles": "Sosyal profiller",
+    "skillsEyebrow": "YETENEKLER",
+    "skillsTitle": "Modern teknoloji, sağlam mühendislik.",
+    "noSkills": "Aktif yetenek kaydı bulunmuyor.",
+    "projectsEyebrow": "SEÇİLİ ÇALIŞMALAR",
+    "projectsTitle": "Öne çıkan projeler",
+    "allProjects": "Tüm projeler",
+    "viewProject": "Projeyi incele",
+    "noProjectsTitle": "Henüz yayında proje yok",
+    "noProjectsText": "Yayınlanan projeler burada otomatik görünür.",
+    "notesEyebrow": "NOTLAR",
+    "latestPosts": "Son yazılar",
+    "allPosts": "Tüm yazılar",
+    "noPosts": "Henüz yayında yazı yok",
+    "seoTitle": "Full-Stack Yazılım Geliştirici",
+    "seoDescription": "Web, backend, veritabanı ve DevOps odaklı yazılım geliştirici."
+  },
+  "about": {
+    "eyebrow": "HAKKIMDA",
+    "fallbackTitle": "Teknoloji kadar problemi anlamaya da önem veriyorum.",
+    "fallbackIntro": "{name}; web geliştirme, backend sistemleri, veritabanı ve DevOps odağında çalışan bir {title}.",
+    "expertiseEyebrow": "UZMANLIK",
+    "skillsTitle": "Teknik yetenekler",
+    "noSkills": "Aktif yetenek kaydı bulunmuyor.",
+    "careerEyebrow": "KARİYER",
+    "experienceTitle": "İş deneyimi",
+    "noExperience": "Aktif iş deneyimi kaydı bulunmuyor.",
+    "educationEyebrow": "EĞİTİM",
+    "educationTitle": "Eğitim geçmişi",
+    "noEducation": "Aktif eğitim kaydı bulunmuyor.",
+    "viewCompany": "Şirketi görüntüle",
+    "viewSchool": "Kurumu görüntüle",
+    "employment": {
+      "full-time": "Tam zamanlı",
+      "part-time": "Yarı zamanlı",
+      "freelance": "Serbest",
+      "internship": "Staj"
+    },
+    "seoTitle": "Hakkımda",
+    "seoDescription": "Yusuf Palak hakkında, yetenekleri, iş deneyimleri ve eğitim geçmişi."
+  },
+  "portfolio": {
+    "eyebrow": "PORTFOLYO",
+    "title": "Seçili projeler.",
+    "intro": "Yayına alınmış ürün, platform ve teknik çalışmalar.",
+    "search": "Projelerde ara…",
+    "searchLabel": "Projelerde ara",
+    "category": "Kategori",
+    "allCategories": "Tüm kategoriler",
+    "technology": "Teknoloji",
+    "allTechnologies": "Tüm teknolojiler",
+    "viewAria": "{title} projesini incele",
+    "viewDetail": "Detayı gör",
+    "noResult": "Sonuç bulunamadı",
+    "noProject": "Henüz yayında proje yok",
+    "changeFilters": "Arama ifadenizi veya filtreleri değiştirmeyi deneyin.",
+    "adminHint": "Yönetim panelinde “Yayında” durumuna alınan projeler burada görünür.",
+    "seoTitle": "Portfolyo",
+    "seoDescription": "Yusuf Palak tarafından geliştirilen ve yayına alınan projeler."
+  },
+  "projectDetail": {
+    "notFound": "Proje bulunamadı",
+    "allProjects": "Tüm projeler",
+    "openLive": "Canlı projeyi aç",
+    "repository": "Kod deposu",
+    "client": "Müşteri",
+    "role": "Rol",
+    "date": "Tarih"
+  },
+  "blog": {
+    "eyebrow": "BLOG",
+    "title": "Üretirken öğrendiklerim.",
+    "intro": "Yazılım mimarisi, ürün geliştirme ve güvenilir sistemler üzerine kısa, uygulanabilir notlar.",
+    "search": "Yazılarda ara…",
+    "searchLabel": "Yazılarda ara",
+    "category": "Kategori",
+    "allCategories": "Tüm kategoriler",
+    "readAria": "{title} yazısını oku",
+    "read": "Yazıyı oku",
+    "noResult": "Sonuç bulunamadı",
+    "noPost": "Henüz yayında yazı yok",
+    "changeFilters": "Arama ifadenizi veya filtreyi değiştirmeyi deneyin.",
+    "adminHint": "Yönetim panelinde yayınlanan yazılar burada otomatik görünür.",
+    "seoDescription": "Yazılım, mimari ve geliştirme üzerine yayınlanmış notlar."
+  },
+  "blogDetail": {
+    "notFound": "Yazı bulunamadı",
+    "allPosts": "Tüm yazılar",
+    "readingTime": "{minutes} dk okuma",
+    "contents": "İçindekiler",
+    "discover": "DEVAMINI KEŞFET",
+    "related": "Benzer yazılar"
+  },
+  "certificates": {
+    "eyebrow": "SERTİFİKALAR",
+    "title": "Sürekli öğrenme.",
+    "intro": "Teknik uzmanlığı destekleyen eğitim, sınav ve yetkinlik kayıtları.",
+    "imageAlt": "{name} sertifika görseli",
+    "issuedAt": "Alınma tarihi",
+    "validity": "Geçerlilik",
+    "neverExpires": "Süresiz",
+    "credentialId": "Sertifika no",
+    "verify": "Sertifikayı doğrula",
+    "emptyTitle": "Henüz aktif sertifika yok",
+    "emptyText": "Yönetim panelinde aktif edilen sertifikalar burada otomatik görünür.",
+    "seoTitle": "Sertifikalar",
+    "seoDescription": "Yusuf Palak sertifikaları ve doğrulama bağlantıları."
+  },
+  "contact": {
+    "eyebrow": "İLETİŞİM",
+    "title": "Birlikte iyi bir şey üretelim.",
+    "intro": "Yeni bir proje, teknik danışmanlık ya da sadece merhaba demek için formu kullanabilir veya sosyal profillerimden bana ulaşabilirsiniz.",
+    "socialTitle": "Beni diğer platformlarda bulun",
+    "form": {
+      "name": "Ad soyad",
+      "email": "E-posta",
+      "subject": "Konu",
+      "message": "Mesaj",
+      "privacyConsent": "{privacy}nı okudum ve onaylıyorum.",
+      "privacyPolicy": "Gizlilik politikası",
+      "sending": "Gönderiliyor…",
+      "submit": "Mesajı gönder",
+      "success": "Mesajınız güvenle kaydedildi.",
+      "failure": "Mesaj gönderilemedi. Lütfen tekrar deneyin."
+    },
+    "validation": {
+      "name": "Lütfen adınızı ve soyadınızı yazın.",
+      "email": "Geçerli bir e-posta adresi yazın.",
+      "subject": "Konu en az 2 karakter olmalı.",
+      "message": "Mesaj en az 10 karakter olmalı.",
+      "privacy": "Devam etmek için gizlilik politikasını onaylayın."
+    },
+    "seoTitle": "İletişim",
+    "seoDescription": "Yusuf Palak ile iletişime geçin."
+  },
+  "legal": {
+    "privacyTitle": "Gizlilik Politikası",
+    "privacyText": "İletişim formunda paylaşılan bilgiler yalnızca iletişim talebini yanıtlamak amacıyla işlenir. Yasal zorunluluk dışında üçüncü kişilerle paylaşılmaz.",
+    "cookiesTitle": "Çerez Politikası",
+    "cookiesText": "Site, tema tercihi ve güvenli yönetici oturumu gibi zorunlu işlevler için sınırlı çerez kullanır.",
+    "termsTitle": "Kullanım Şartları",
+    "termsText": "Bu sitedeki içerikler bilgilendirme amaçlıdır. Harici bağlantıların içeriğinden ilgili sağlayıcı sorumludur."
+  },
+  "error": {
+    "notFound": "Aradığınız sayfa bulunamadı",
+    "generic": "Bir sorun oluştu",
+    "home": "Ana sayfaya dön"
+  }
+}

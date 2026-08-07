@@ -1,0 +1,192 @@
+{
+  "site": {
+    "description": "Full-stack developer building dependable digital products."
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "certificates": "Certificates",
+    "contact": "Contact"
+  },
+  "a11y": {
+    "skipContent": "Skip to content",
+    "openMenu": "Open menu",
+    "mainMenu": "Main navigation",
+    "lightTheme": "Switch to light theme",
+    "darkTheme": "Switch to dark theme",
+    "languageSwitcher": "Language selection",
+    "socialLinks": "Social media links"
+  },
+  "footer": {
+    "tagline": "Full-stack developer building dependable digital products.",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "terms": "Terms"
+  },
+  "common": {
+    "project": "Project",
+    "featured": "Featured",
+    "current": "Present",
+    "technical": "Technical",
+    "year": "years",
+    "minuteShort": "min",
+    "dateSeparator": "—"
+  },
+  "home": {
+    "location": "ISTANBUL",
+    "fallbackTitle": "I turn ideas into dependable digital products.",
+    "fallbackIntro": "Hi, I’m {name}. I build fast, secure, and sustainable solutions across web development, backend systems, databases, and DevOps.",
+    "viewProjects": "View my projects",
+    "contact": "Get in touch",
+    "downloadCv": "Download CV",
+    "socialProfiles": "Social profiles",
+    "skillsEyebrow": "SKILLS",
+    "skillsTitle": "Modern technology, solid engineering.",
+    "noSkills": "No active skills have been added yet.",
+    "projectsEyebrow": "SELECTED WORK",
+    "projectsTitle": "Featured projects",
+    "allProjects": "All projects",
+    "viewProject": "View project",
+    "noProjectsTitle": "No published projects yet",
+    "noProjectsText": "Published projects will appear here automatically.",
+    "notesEyebrow": "NOTES",
+    "latestPosts": "Latest posts",
+    "allPosts": "All posts",
+    "noPosts": "No published posts yet",
+    "seoTitle": "Full-Stack Software Developer",
+    "seoDescription": "Software developer focused on web, backend, databases, and DevOps."
+  },
+  "about": {
+    "eyebrow": "ABOUT",
+    "fallbackTitle": "Understanding the problem matters as much as the technology.",
+    "fallbackIntro": "{name} is a {title} focused on web development, backend systems, databases, and DevOps.",
+    "expertiseEyebrow": "EXPERTISE",
+    "skillsTitle": "Technical skills",
+    "noSkills": "No active skills have been added yet.",
+    "careerEyebrow": "CAREER",
+    "experienceTitle": "Work experience",
+    "noExperience": "No active work experience has been added yet.",
+    "educationEyebrow": "EDUCATION",
+    "educationTitle": "Education history",
+    "noEducation": "No active education record has been added yet.",
+    "viewCompany": "View company",
+    "viewSchool": "View institution",
+    "employment": {
+      "full-time": "Full-time",
+      "part-time": "Part-time",
+      "freelance": "Freelance",
+      "internship": "Internship"
+    },
+    "seoTitle": "About",
+    "seoDescription": "About Yusuf Palak, his skills, work experience, and education."
+  },
+  "portfolio": {
+    "eyebrow": "PORTFOLIO",
+    "title": "Selected projects.",
+    "intro": "Shipped products, platforms, and technical work.",
+    "search": "Search projects…",
+    "searchLabel": "Search projects",
+    "category": "Category",
+    "allCategories": "All categories",
+    "technology": "Technology",
+    "allTechnologies": "All technologies",
+    "viewAria": "View the {title} project",
+    "viewDetail": "View details",
+    "noResult": "No results found",
+    "noProject": "No published projects yet",
+    "changeFilters": "Try changing your search term or filters.",
+    "adminHint": "Projects marked as published in the admin panel will appear here.",
+    "seoTitle": "Portfolio",
+    "seoDescription": "Projects developed and shipped by Yusuf Palak."
+  },
+  "projectDetail": {
+    "notFound": "Project not found",
+    "allProjects": "All projects",
+    "openLive": "Open live project",
+    "repository": "Code repository",
+    "client": "Client",
+    "role": "Role",
+    "date": "Date"
+  },
+  "blog": {
+    "eyebrow": "BLOG",
+    "title": "Things I learn while building.",
+    "intro": "Short, practical notes on software architecture, product development, and dependable systems.",
+    "search": "Search posts…",
+    "searchLabel": "Search posts",
+    "category": "Category",
+    "allCategories": "All categories",
+    "readAria": "Read {title}",
+    "read": "Read article",
+    "noResult": "No results found",
+    "noPost": "No published posts yet",
+    "changeFilters": "Try changing your search term or filter.",
+    "adminHint": "Posts published in the admin panel will appear here automatically.",
+    "seoDescription": "Published notes on software, architecture, and development."
+  },
+  "blogDetail": {
+    "notFound": "Post not found",
+    "allPosts": "All posts",
+    "readingTime": "{minutes} min read",
+    "contents": "Contents",
+    "discover": "KEEP EXPLORING",
+    "related": "Related posts"
+  },
+  "certificates": {
+    "eyebrow": "CERTIFICATES",
+    "title": "Always learning.",
+    "intro": "Training, exams, and credentials that support technical expertise.",
+    "imageAlt": "{name} certificate image",
+    "issuedAt": "Issued",
+    "validity": "Validity",
+    "neverExpires": "No expiration",
+    "credentialId": "Credential ID",
+    "verify": "Verify certificate",
+    "emptyTitle": "No active certificates yet",
+    "emptyText": "Certificates activated in the admin panel will appear here automatically.",
+    "seoTitle": "Certificates",
+    "seoDescription": "Yusuf Palak’s certificates and verification links."
+  },
+  "contact": {
+    "eyebrow": "CONTACT",
+    "title": "Let’s build something good together.",
+    "intro": "Use the form for a new project, technical consulting, or simply to say hello. You can also reach me through my social profiles.",
+    "socialTitle": "Find me on other platforms",
+    "form": {
+      "name": "Full name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "privacyConsent": "I have read and accept the {privacy}.",
+      "privacyPolicy": "privacy policy",
+      "sending": "Sending…",
+      "submit": "Send message",
+      "success": "Your message has been saved securely.",
+      "failure": "The message could not be sent. Please try again."
+    },
+    "validation": {
+      "name": "Please enter your full name.",
+      "email": "Enter a valid email address.",
+      "subject": "The subject must be at least 2 characters.",
+      "message": "The message must be at least 10 characters.",
+      "privacy": "Please accept the privacy policy to continue."
+    },
+    "seoTitle": "Contact",
+    "seoDescription": "Get in touch with Yusuf Palak."
+  },
+  "legal": {
+    "privacyTitle": "Privacy Policy",
+    "privacyText": "Information shared through the contact form is processed only to respond to your request. It is not shared with third parties unless legally required.",
+    "cookiesTitle": "Cookie Policy",
+    "cookiesText": "The site uses a limited number of cookies for essential functions such as theme preferences and secure administrator sessions.",
+    "termsTitle": "Terms of Use",
+    "termsText": "The content on this site is for informational purposes. External content remains the responsibility of its respective provider."
+  },
+  "error": {
+    "notFound": "The page you’re looking for could not be found",
+    "generic": "Something went wrong",
+    "home": "Return home"
+  }
+}

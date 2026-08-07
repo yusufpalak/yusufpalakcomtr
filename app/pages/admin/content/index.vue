@@ -1,0 +1,8 @@
+<script setup lang="ts">
+import { adminModules } from '~/utils/admin-modules'
+definePageMeta({ layout: 'admin', middleware: 'admin', i18n: false })
+const query = ref('')
+const groups = ['Genel', 'Profil', 'Portfolyo', 'Blog'] as const
+const filtered = computed(() => adminModules.filter(item => `${item.label} ${item.description}`.toLocaleLowerCase('tr').includes(query.value.toLocaleLowerCase('tr'))))
+</script>
+<template><div><header class="admin-page-header"><div><p class="admin-kicker">İÇERİK YÖNETİMİ</p><h1>Tüm içerikler tek yerde.</h1><p>Güncellemek istediğiniz modülü seçin; her kart doğrudan ilgili yönetim ekranına gider.</p></div><label class="admin-search"><i class="bi bi-search"/><input v-model="query" aria-label="İçerik modüllerinde ara" placeholder="Modüllerde ara…"></label></header><template v-for="group in groups" :key="group"><section v-if="filtered.some(item => item.group === group)" class="admin-module-section"><div class="admin-section-title"><h2>{{ group }}</h2><span>{{ filtered.filter(item => item.group === group).length }} modül</span></div><div class="admin-module-grid"><a v-for="item in filtered.filter(module => module.group === group)" :key="item.slug" :href="`/admin/content/${item.slug}`" class="admin-module-card"><span class="admin-module-card__icon" :style="{ '--module-color': item.color }"><i :class="`bi ${item.icon}`"/></span><div><h3>{{ item.label }}</h3><p>{{ item.description }}</p></div><span class="admin-module-card__action">Yönet <i class="bi bi-arrow-right"/></span></a></div></section></template><div v-if="!filtered.length" class="admin-empty"><i class="bi bi-search"/><h2>Modül bulunamadı</h2><p>Farklı bir arama ifadesi deneyin.</p></div></div></template>

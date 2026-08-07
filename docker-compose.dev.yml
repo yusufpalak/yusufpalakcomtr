@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio
+    ports: ["55432:5432"]
+    volumes: [portfolio_db:/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U portfolio"], interval: 5s, timeout: 3s, retries: 10}
+  libretranslate:
+    image: libretranslate/libretranslate:v1.9.6
+    environment:
+      LT_LOAD_ONLY: tr,en
+      LT_DISABLE_WEB_UI: "true"
+    ports: ["127.0.0.1:5500:5000"]
+    volumes: [libretranslate_models:/home/libretranslate/.local]
+    restart: unless-stopped
+    healthcheck: {test: ["CMD-SHELL", "./venv/bin/python scripts/healthcheck.py"], interval: 10s, timeout: 4s, retries: 12, start_period: 30s}
+  app:
+    build: {context: ., target: build}
+    command: pnpm dev --host 0.0.0.0
+    ports: ["3000:3000"]
+    environment:
+      DATABASE_URL: postgres://portfolio:portfolio@postgres:5432/portfolio
+      NUXT_SESSION_PASSWORD: dev-compose-session-password-change-me
+      NUXT_LIBRE_TRANSLATE_URL: http://libretranslate:5000
+    volumes: [".:/app", "/app/node_modules", "portfolio_media:/app/uploads"]
+    depends_on: {postgres: {condition: service_healthy}, libretranslate: {condition: service_healthy}}
+volumes: {portfolio_db: {}, portfolio_media: {}, libretranslate_models: {}}

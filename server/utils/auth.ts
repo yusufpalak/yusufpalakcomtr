@@ -1,0 +1,1 @@
+export async function requireAdmin(event:Parameters<typeof getUserSession>[0]){const session=await getUserSession(event);if(!session.user?.id)throw createError({statusCode:401,statusMessage:'Oturum gerekli.'});return session.user}
