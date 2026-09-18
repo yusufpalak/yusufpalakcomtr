@@ -108,7 +108,8 @@
     "repository": "Code repository",
     "client": "Client",
     "role": "Role",
-    "date": "Date"
+    "date": "Date",
+    "gallery": "Project images"
   },
   "blog": {
     "eyebrow": "BLOG",
@@ -144,6 +145,7 @@
     "neverExpires": "No expiration",
     "credentialId": "Credential ID",
     "verify": "Verify certificate",
+    "downloadDocument": "Download document",
     "emptyTitle": "No active certificates yet",
     "emptyText": "Certificates activated in the admin panel will appear here automatically.",
     "seoTitle": "Certificates",

@@ -23,9 +23,11 @@ const inputType = computed(() => {
       <small v-if="field.help">{{ field.help }}</small>
       <textarea v-if="field.type === 'textarea' || field.type === 'json'" v-model="textValue" :rows="field.type === 'json' ? 7 : 5" :required="field.required" :placeholder="field.placeholder" />
       <select v-else-if="field.type === 'relation-multiple'" v-model="multipleValue" multiple :size="Math.min(Math.max(field.options?.length || 3, 3), 7)"><option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}</option></select>
-      <select v-else-if="field.type === 'select' || field.type === 'relation'" v-model="textValue" :required="field.required"><option v-if="!field.required" value="">Seçiniz</option><option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}</option></select>
+      <select v-else-if="field.type === 'select' || field.type === 'relation' || field.type === 'media'" v-model="textValue" :required="field.required"><option v-if="!field.required" value="">{{ field.type === 'media' ? 'Dosya seçilmedi' : 'Seçiniz' }}</option><option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}</option></select>
       <input v-else-if="field.type === 'number'" v-model="numberValue" type="number" :required="field.required" :placeholder="field.placeholder" :min="field.min" :max="field.max">
       <input v-else v-model="textValue" :type="inputType" :required="field.required" :placeholder="field.placeholder">
+      <img v-if="field.type === 'media' && field.mediaKind === 'image' && textValue" class="admin-media-field-preview" :src="`/api/public/media/${textValue}`" alt="Seçilen dosyanın önizlemesi">
+      <a v-if="field.type === 'media'" href="/admin/media" target="_blank" rel="noopener noreferrer" class="admin-media-field-link">Medya kütüphanesini aç <i class="bi bi-box-arrow-up-right" /></a>
     </template>
   </label>
 </template>

@@ -16,6 +16,8 @@ export default defineNuxtConfig({
     '~/assets/css/public-content-overrides.css',
     '~/assets/css/admin.css',
     '~/assets/css/admin-relations.css',
+    '~/assets/css/admin-site-settings.css',
+    '~/assets/css/admin-media.css',
     'bootstrap-icons/font/bootstrap-icons.css',
   ],
   i18n: {

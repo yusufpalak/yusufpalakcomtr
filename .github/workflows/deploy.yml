@@ -1,0 +1,62 @@
+name: Deploy Admin to Server
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_NAME: yusufpalakcomtr
+  SERVER_IP: 91.107.235.125
+  DEPLOY_USER: root
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.LINUXSERVERSSH }}
+
+      - name: Pin server host key
+        env:
+          KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          if [ -n "$KNOWN_HOSTS" ]; then
+            printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            echo "::warning::SSH_KNOWN_HOSTS secret'ı tanımlı değil; host key ilk bağlantıda kabul ediliyor (MITM'e açık). Sunucuda 'for f in /etc/ssh/ssh_host_*_key.pub; do echo \"$SERVER_IP \$(cut -d\" \" -f1,2 \$f)\"; done' çıktısını secret olarak ekleyin."
+            ssh-keyscan -T 10 "$SERVER_IP" > ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Sync code to server
+        run: |
+          ssh -o StrictHostKeyChecking=yes "${DEPLOY_USER}@${SERVER_IP}" \
+            "mkdir -p /root/${PROJECT_NAME}"
+
+          rsync -az --delete \
+            --exclude '.git/' \
+            --exclude 'node_modules/' \
+            --exclude '.env' \
+            -e "ssh -o StrictHostKeyChecking=yes" \
+            ./ "${DEPLOY_USER}@${SERVER_IP}:/root/${PROJECT_NAME}/"
+
+      - name: Build and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=yes \
+              "${DEPLOY_USER}@${SERVER_IP}" \
+              bash -euo pipefail -s <<EOF
+            cd "/root/${PROJECT_NAME}"
+
+            docker build -t "127.0.0.1:5000/${PROJECT_NAME}:latest" .
+            docker push "127.0.0.1:5000/${PROJECT_NAME}:latest"
+
+            docker stack deploy -c "/root/yml/${PROJECT_NAME}.yml" "${PROJECT_NAME}"
+          EOF

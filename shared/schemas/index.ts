@@ -26,6 +26,22 @@ export const contactSchema = z.object({
   website: z.string().max(0),
 })
 
+export const adminMessageQuerySchema = z.object({
+  status: z.enum(['all', 'new', 'read', 'archived']).default('all'),
+  q: z.string().trim().max(100).default(''),
+  page: z.coerce.number().int().min(1).max(10_000).default(1),
+})
+
+export const adminMessageStatusSchema = z.object({
+  status: z.enum(['new', 'read', 'archived']),
+}).strict()
+
+export const siteProfileSchema = z.object({
+  name: z.string().trim().min(1, 'Ad ve soyad zorunludur.').max(120),
+  title: z.string().trim().min(1, 'Mesleki unvan zorunludur.').max(160),
+  focus: z.array(z.string().trim().min(1).max(100)).max(12),
+})
+
 export const socialLinkSchema = z.object({
   label: z.string().trim().min(2).max(60),
   platform: z.string().trim().max(40).optional(),

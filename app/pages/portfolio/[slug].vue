@@ -46,5 +46,23 @@ useSeoMeta({
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="article-content rich-content" v-html="project.contentHtml" />
     </div>
+    <section v-if="project.gallery.length" class="project-detail__gallery" aria-labelledby="project-gallery-title">
+      <h2 id="project-gallery-title">{{ t('projectDetail.gallery') }}</h2>
+      <div class="project-detail__gallery-grid">
+        <a v-for="image in project.gallery" :key="image.id" :href="image.url" target="_blank" rel="noopener noreferrer">
+          <img :src="image.url" :alt="image.altText" loading="lazy">
+        </a>
+      </div>
+    </section>
   </article>
 </template>
+
+<style scoped>
+.project-detail__gallery{margin-top:4rem;padding-top:2.5rem;border-top:1px solid var(--line)}
+.project-detail__gallery h2{margin:0 0 1.25rem;font-size:1.5rem}
+.project-detail__gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.project-detail__gallery-grid a{display:block;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.project-detail__gallery-grid img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;transition:transform .25s ease}
+.project-detail__gallery-grid a:hover img{transform:scale(1.02)}
+@media(max-width:700px){.project-detail__gallery-grid{grid-template-columns:1fr}}
+</style>

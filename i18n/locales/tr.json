@@ -108,7 +108,8 @@
     "repository": "Kod deposu",
     "client": "Müşteri",
     "role": "Rol",
-    "date": "Tarih"
+    "date": "Tarih",
+    "gallery": "Proje görselleri"
   },
   "blog": {
     "eyebrow": "BLOG",
@@ -144,6 +145,7 @@
     "neverExpires": "Süresiz",
     "credentialId": "Sertifika no",
     "verify": "Sertifikayı doğrula",
+    "downloadDocument": "Belgeyi indir",
     "emptyTitle": "Henüz aktif sertifika yok",
     "emptyText": "Yönetim panelinde aktif edilen sertifikalar burada otomatik görünür.",
     "seoTitle": "Sertifikalar",

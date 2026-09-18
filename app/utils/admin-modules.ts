@@ -8,7 +8,7 @@ export type AdminModule = {
 }
 
 export const adminModules: AdminModule[] = [
-  { slug: 'site-settings', label: 'Site ayarları', description: 'Marka, iletişim ve genel site yapılandırması', icon: 'bi-sliders2', group: 'Genel', color: '#8b5cf6' },
+  { slug: 'site-settings', label: 'Site ayarları', description: 'Görünen ad, unvan ve çalışma alanları', icon: 'bi-sliders2', group: 'Genel', color: '#8b5cf6' },
   { slug: 'homepage', label: 'Anasayfa', description: 'Hero, çağrı alanları ve öne çıkan içerikler', icon: 'bi-house-door', group: 'Genel', color: '#6366f1' },
   { slug: 'about', label: 'Hakkımda', description: 'Biyografi, yaklaşım ve kariyer özeti', icon: 'bi-person', group: 'Profil', color: '#0ea5e9' },
   { slug: 'stats', label: 'İstatistikler', description: 'Proje, deneyim ve sertifika sayaçları', icon: 'bi-graph-up-arrow', group: 'Genel', color: '#14b8a6' },

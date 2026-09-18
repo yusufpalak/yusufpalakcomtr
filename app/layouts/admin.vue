@@ -4,7 +4,7 @@ const mobileOpen = ref(false)
 const navGroups = [
   { label: 'Genel', items: [{ label: 'Dashboard', to: '/admin', icon: 'bi-grid-1x2' }, { label: 'İçerik yönetimi', to: '/admin/content', icon: 'bi-layers' }] },
   { label: 'Yönetim', items: [{ label: 'Sosyal bağlantılar', to: '/admin/social-links', icon: 'bi-share' }, { label: 'Mesajlar', to: '/admin/messages', icon: 'bi-inbox' }, { label: 'Medya', to: '/admin/media', icon: 'bi-images' }] },
-  { label: 'Sistem', items: [{ label: 'Ayarlar & SEO', to: '/admin/settings', icon: 'bi-gear' }] }
+  { label: 'Sistem', items: [{ label: 'Site ayarları', to: '/admin/content/site-settings', icon: 'bi-gear' }] }
 ]
 const pageTitle = computed(() => {
   const path = route.path

@@ -52,6 +52,8 @@ export type PublicExperience = {
   summary: string | null
   responsibilities: string | null
   companyUrl: string | null
+  logoUrl: string | null
+  logoAlt: string
 }
 
 export type PublicEducation = {
@@ -64,6 +66,8 @@ export type PublicEducation = {
   isCurrent: boolean
   description: string | null
   url: string | null
+  logoUrl: string | null
+  logoAlt: string
 }
 
 export type PublicProject = {
@@ -90,6 +94,7 @@ export type PublicProjectDetail = PublicProject & {
   contentHtml: string
   seoTitle: string | null
   seoDescription: string | null
+  gallery: Array<{ id: string, url: string, altText: string }>
 }
 
 export type PublicBlogPost = {
@@ -130,6 +135,7 @@ export type PublicCertificate = {
   description: string | null
   category: string | null
   imageUrl: string | null
+  pdfUrl: string | null
 }
 
 export type PublicSiteContent = {

@@ -3,7 +3,7 @@ import type { AnyPgColumn, AnyPgTable } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import { blogLocalizedFields, getAdminContentForm, type AdminContentField } from '../../shared/admin-content'
 import { defaultLocale, supportedLocaleCodes, type SupportedLocale } from '../../shared/i18n/locales'
-import { blogTranslationSchema, blogTranslationsSchema } from '../../shared/schemas'
+import { blogTranslationSchema, blogTranslationsSchema, siteProfileSchema } from '../../shared/schemas'
 import type { AdminBlogTranslation, AdminBlogTranslations, BlogTranslation, BlogTranslations } from '../../shared/types/blog-translations'
 import { sanitizeRichText } from './rich-text'
 import {
@@ -15,6 +15,7 @@ import {
   educations,
   experiences,
   homepageSections,
+  mediaFiles,
   projectCategories,
   projectTechnologies,
   projects,
@@ -192,7 +193,7 @@ export function normalizeContentInput(module: string, body: unknown) {
       values[field.key] = [...new Set(rawValues.map(value => z.uuid().parse(value)))]
       continue
     }
-    if (field.type === 'relation') {
+    if (field.type === 'relation' || field.type === 'media') {
       const textValue = normalizeText(field, raw)
       values[field.key] = textValue === null ? null : z.uuid().parse(textValue)
       continue
@@ -229,6 +230,7 @@ export function normalizeContentInput(module: string, body: unknown) {
   }
 
   if (module === 'about' && typeof values.key === 'string') values.key = `about:${values.key.replace(/^about:/, '')}`
+  if (module === 'site-settings' && values.key === 'profile') values.value = siteProfileSchema.parse(values.value)
   if (module === 'blog-posts') {
     const baseTranslation = blogTranslationSchema.parse(source)
     for (const field of blogLocalizedFields) values[field.key] = baseTranslation[field.key as keyof BlogTranslation]
@@ -304,9 +306,25 @@ async function syncManyRelations(module: string, id: string, relations: Record<s
   }
 }
 
+async function assertMediaReferencesExist(module: string, values: Record<string, unknown>) {
+  const { form } = getContentAdapter(module)
+  const fields = form.fields.filter(field => field.type === 'media' && typeof values[field.key] === 'string')
+  if (!fields.length) return
+  const ids = fields.map(field => values[field.key] as string)
+  const rows = await useDb().select({ id: mediaFiles.id, mimeType: mediaFiles.mimeType }).from(mediaFiles).where(inArray(mediaFiles.id, ids))
+  const byId = new Map(rows.map(row => [row.id, row.mimeType]))
+  for (const field of fields) {
+    const mimeType = byId.get(values[field.key] as string)
+    if (!mimeType || field.mediaKind === 'pdf' && mimeType !== 'application/pdf' || field.mediaKind === 'image' && !mimeType.startsWith('image/')) {
+      throw new z.ZodError([{ code: 'custom', path: [field.key], message: `${field.label} için geçerli bir dosya seçin.` }])
+    }
+  }
+}
+
 export async function createAdminContentRecord(module: string, body: unknown) {
   const { adapter } = getContentAdapter(module)
   const values = normalizeContentInput(module, body)
+  await assertMediaReferencesExist(module, values)
   if (module === 'blog-posts') await assertLocalizedBlogSlugsAvailable(storedBlogTranslations(values.translations))
   const relations = extractManyRelations(module, values)
   const [row] = await useDb().insert(adapter.table).values(values).returning()
@@ -319,6 +337,7 @@ export async function updateAdminContentRecord(module: string, id: string, body:
   const { adapter } = getContentAdapter(module)
   const idValue = z.uuid().parse(id)
   const normalized = normalizeContentInput(module, body)
+  await assertMediaReferencesExist(module, normalized)
   if (module === 'blog-posts') await assertLocalizedBlogSlugsAvailable(storedBlogTranslations(normalized.translations), idValue)
   const relations = extractManyRelations(module, normalized)
   const values = { ...normalized, updatedAt: new Date() }
@@ -329,27 +348,33 @@ export async function updateAdminContentRecord(module: string, id: string, body:
 }
 
 export async function getContentRelationOptions(module: string) {
-  getContentAdapter(module)
+  const { form } = getContentAdapter(module)
   const db = useDb()
+  const mediaFields = form.fields.filter(field => field.type === 'media')
+  const mediaOptions: Record<string, Array<{ label: string, value: string }>> = {}
+  if (mediaFields.length) {
+    const mediaRows = await db.select({ id: mediaFiles.id, filename: mediaFiles.filename, mimeType: mediaFiles.mimeType }).from(mediaFiles).orderBy(desc(mediaFiles.createdAt))
+    for (const field of mediaFields) mediaOptions[field.key] = mediaRows.filter(row => field.mediaKind === 'pdf' ? row.mimeType === 'application/pdf' : row.mimeType.startsWith('image/')).map(row => ({ label: row.filename, value: row.id }))
+  }
   if (module === 'skills') {
     const rows = await db.select({ label: skillCategories.name, value: skillCategories.id }).from(skillCategories).orderBy(asc(skillCategories.sortOrder), asc(skillCategories.name))
-    return { categoryId: rows }
+    return { categoryId: rows, ...mediaOptions }
   }
   if (module === 'projects') {
     const [categories, technologyOptions] = await Promise.all([
       db.select({ label: projectCategories.name, value: projectCategories.id }).from(projectCategories).orderBy(asc(projectCategories.name)),
       db.select({ label: technologies.name, value: technologies.id }).from(technologies).orderBy(asc(technologies.name)),
     ])
-    return { categoryId: categories, technologyIds: technologyOptions }
+    return { categoryId: categories, technologyIds: technologyOptions, ...mediaOptions }
   }
   if (module === 'blog-posts') {
     const [categories, tagOptions] = await Promise.all([
       db.select({ label: blogCategories.name, value: blogCategories.id }).from(blogCategories).orderBy(asc(blogCategories.name)),
       db.select({ label: blogTags.name, value: blogTags.id }).from(blogTags).orderBy(asc(blogTags.name)),
     ])
-    return { categoryId: categories, tagIds: tagOptions }
+    return { categoryId: categories, tagIds: tagOptions, ...mediaOptions }
   }
-  return {}
+  return mediaOptions
 }
 
 export async function deleteAdminContentRecord(module: string, id: string) {

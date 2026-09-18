@@ -1,4 +1,4 @@
-export type AdminFieldType = 'text' | 'textarea' | 'slug' | 'url' | 'number' | 'checkbox' | 'select' | 'relation' | 'relation-multiple' | 'date' | 'datetime' | 'json'
+export type AdminFieldType = 'text' | 'textarea' | 'slug' | 'url' | 'number' | 'checkbox' | 'select' | 'relation' | 'relation-multiple' | 'media' | 'date' | 'datetime' | 'json'
 
 export type AdminFieldOption = { label: string, value: string }
 export type AdminContentField = {
@@ -13,6 +13,7 @@ export type AdminContentField = {
   max?: number
   options?: AdminFieldOption[]
   relationModule?: string
+  mediaKind?: 'image' | 'pdf'
   wide?: boolean
 }
 
@@ -48,8 +49,8 @@ export const adminContentForms: Record<string, AdminContentForm> = {
   'site-settings': {
     singular: 'site ayarı',
     fields: [
-      { key: 'key', label: 'Ayar anahtarı', type: 'text', required: true, placeholder: 'site.title' },
-      { key: 'value', label: 'Değer', type: 'json', required: true, wide: true, help: 'Metin veya geçerli JSON yazabilirsiniz.' },
+      { key: 'key', label: 'Teknik ayar anahtarı', type: 'text', required: true, placeholder: 'ornek.ayar', help: 'Yalnızca uygulamanın tanıdığı anahtarlar sitede etki gösterir.' },
+      { key: 'value', label: 'Ayar değeri', type: 'json', required: true, wide: true, help: 'Metin veya geçerli JSON yazın. JSON nesneleri için süslü parantez kullanın.' },
     ],
   },
   homepage: {
@@ -109,6 +110,7 @@ export const adminContentForms: Record<string, AdminContentForm> = {
       { key: 'summary', label: 'Özet', type: 'textarea', wide: true },
       { key: 'responsibilities', label: 'Sorumluluklar', type: 'textarea', wide: true },
       { key: 'companyUrl', label: 'Şirket bağlantısı', type: 'url' },
+      { key: 'logoMediaId', label: 'Şirket görseli / logosu', type: 'media', mediaKind: 'image', wide: true, help: 'Medya kütüphanesine yüklediğiniz görseli seçin.' },
       sortField, activeField,
     ],
   },
@@ -123,6 +125,7 @@ export const adminContentForms: Record<string, AdminContentForm> = {
       { key: 'isCurrent', label: 'Devam ediyor', type: 'checkbox', default: false },
       { key: 'description', label: 'Açıklama', type: 'textarea', wide: true },
       { key: 'url', label: 'Okul bağlantısı', type: 'url' },
+      { key: 'logoMediaId', label: 'Okul görseli / logosu', type: 'media', mediaKind: 'image', wide: true, help: 'Medya kütüphanesine yüklediğiniz görseli seçin.' },
       sortField, activeField,
     ],
   },
@@ -132,6 +135,7 @@ export const adminContentForms: Record<string, AdminContentForm> = {
       { key: 'title', label: 'Proje başlığı', type: 'text', required: true }, slugField,
       { key: 'summary', label: 'Kısa özet', type: 'textarea', required: true, wide: true },
       { key: 'content', label: 'Proje içeriği', type: 'textarea', required: true, wide: true },
+      { key: 'coverMediaId', label: 'Kapak görseli', type: 'media', mediaKind: 'image', wide: true, help: 'Önce Medya kütüphanesine yükleyin; ardından burada seçin.' },
       { key: 'categoryId', label: 'Kategori', type: 'relation', relationModule: 'project-categories' },
       { key: 'technologyIds', label: 'Teknolojiler', type: 'relation-multiple', relationModule: 'technologies', wide: true, help: 'Birden fazla seçim için Ctrl (Windows) veya Command (macOS) tuşunu kullanın.' },
       { key: 'liveUrl', label: 'Canlı bağlantı', type: 'url' },
@@ -154,6 +158,7 @@ export const adminContentForms: Record<string, AdminContentForm> = {
     singular: 'blog yazısı',
     fields: [
       ...blogLocalizedFields,
+      { key: 'coverMediaId', label: 'Kapak görseli', type: 'media', mediaKind: 'image', wide: true, help: 'Önce Medya kütüphanesine yükleyin; ardından burada seçin.' },
       { key: 'categoryId', label: 'Kategori', type: 'relation', relationModule: 'blog-categories' },
       { key: 'tagIds', label: 'Etiketler', type: 'relation-multiple', relationModule: 'blog-tags', wide: true, help: 'Birden fazla seçim için Ctrl (Windows) veya Command (macOS) tuşunu kullanın.' },
       { key: 'status', label: 'Durum', type: 'select', required: true, default: 'draft', options: statusOptions },
@@ -175,6 +180,8 @@ export const adminContentForms: Record<string, AdminContentForm> = {
       { key: 'verifyUrl', label: 'Doğrulama bağlantısı', type: 'url' },
       { key: 'category', label: 'Kategori', type: 'text' },
       { key: 'description', label: 'Açıklama', type: 'textarea', wide: true },
+      { key: 'imageMediaId', label: 'Sertifika görseli', type: 'media', mediaKind: 'image', wide: true, help: 'Önce Medya kütüphanesine yükleyin; ardından burada seçin.' },
+      { key: 'pdfMediaId', label: 'Sertifika PDF dosyası', type: 'media', mediaKind: 'pdf', wide: true, help: 'PDF dosyasını Medya kütüphanesine yükleyin; ardından burada seçin.' },
       sortField, activeField,
     ],
   },

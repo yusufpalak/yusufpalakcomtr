@@ -28,6 +28,7 @@ import {
   homepageSections,
   mediaFiles,
   projectCategories,
+  projectImages,
   projects,
   projectTechnologies,
   siteSettings,
@@ -79,7 +80,12 @@ function sectionFromRow(row: typeof homepageSections.$inferSelect): PublicSectio
 }
 
 function mediaUrl(row: { id: string, storageKey: string } | undefined) {
-  if (!row || !/^uploads\/[0-9a-f-]+\.webp$/i.test(row.storageKey)) return null
+  if (!row || !/^(?:s3\/(?:yusufpalakcomtr\/)?)?uploads\/[0-9a-f-]{36}\.webp$/i.test(row.storageKey)) return null
+  return `/api/public/media/${row.id}`
+}
+
+function mediaPdfUrl(row: { id: string, storageKey: string } | undefined) {
+  if (!row || !/^(?:s3\/(?:yusufpalakcomtr\/)?)?uploads\/[0-9a-f-]{36}\.pdf$/i.test(row.storageKey)) return null
   return `/api/public/media/${row.id}`
 }
 
@@ -171,9 +177,12 @@ export async function getPublicSiteContent(locale: SupportedLocale = defaultLoca
   const projectIds = projectRows.map(row => row.id)
   const postIds = localizedPostRows.map(row => row.id)
   const allMediaIds = [...new Set([
+    ...experienceRows.flatMap(row => row.logoMediaId ? [row.logoMediaId] : []),
+    ...educationRows.flatMap(row => row.logoMediaId ? [row.logoMediaId] : []),
     ...projectRows.flatMap(row => row.coverMediaId ? [row.coverMediaId] : []),
     ...localizedPostRows.flatMap(row => row.coverMediaId ? [row.coverMediaId] : []),
     ...certificateRows.flatMap(row => row.imageMediaId ? [row.imageMediaId] : []),
+    ...certificateRows.flatMap(row => row.pdfMediaId ? [row.pdfMediaId] : []),
   ])]
 
   const [technologyRows, tagRows, mediaRows] = await Promise.all([
@@ -206,6 +215,8 @@ export async function getPublicSiteContent(locale: SupportedLocale = defaultLoca
     summary: row.summary,
     responsibilities: row.responsibilities,
     companyUrl: row.companyUrl,
+    logoUrl: mediaUrl(row.logoMediaId ? mediaById.get(row.logoMediaId) : undefined),
+    logoAlt: row.logoMediaId ? mediaById.get(row.logoMediaId)?.altText || `${row.company} logosu` : `${row.company} logosu`,
   }))
 
   const publicEducations: PublicEducation[] = educationRows.map(row => ({
@@ -218,6 +229,8 @@ export async function getPublicSiteContent(locale: SupportedLocale = defaultLoca
     isCurrent: row.isCurrent,
     description: row.description,
     url: row.url,
+    logoUrl: mediaUrl(row.logoMediaId ? mediaById.get(row.logoMediaId) : undefined),
+    logoAlt: row.logoMediaId ? mediaById.get(row.logoMediaId)?.altText || `${row.school} logosu` : `${row.school} logosu`,
   }))
 
   const publicProjects: PublicProject[] = projectRows.map(row => {
@@ -276,6 +289,7 @@ export async function getPublicSiteContent(locale: SupportedLocale = defaultLoca
     description: row.description,
     category: row.category,
     imageUrl: mediaUrl(row.imageMediaId ? mediaById.get(row.imageMediaId) : undefined),
+    pdfUrl: mediaPdfUrl(row.pdfMediaId ? mediaById.get(row.pdfMediaId) : undefined),
   }))
 
   const automaticValues: Record<string, number | null> = {
@@ -326,7 +340,16 @@ export async function getPublicProject(slug: string): Promise<PublicProjectDetai
   if (!project) return undefined
   const [row] = await useDb().select({ content: projects.content, seoTitle: projects.seoTitle, seoDescription: projects.seoDescription }).from(projects).where(and(eq(projects.slug, slug), eq(projects.status, 'published'), isNull(projects.deletedAt))).limit(1)
   if (!row) return undefined
-  return { ...project, contentHtml: sanitizeRichText(row.content), seoTitle: row.seoTitle, seoDescription: row.seoDescription }
+  const galleryRows = await useDb().select({ id: mediaFiles.id, storageKey: mediaFiles.storageKey, altText: mediaFiles.altText })
+    .from(projectImages)
+    .innerJoin(mediaFiles, eq(projectImages.mediaId, mediaFiles.id))
+    .where(eq(projectImages.projectId, project.id))
+    .orderBy(asc(projectImages.sortOrder))
+  const gallery = galleryRows.flatMap((image) => {
+    const url = mediaUrl(image)
+    return url ? [{ id: image.id, url, altText: image.altText || `${project.title} ekran görüntüsü` }] : []
+  })
+  return { ...project, contentHtml: sanitizeRichText(row.content), seoTitle: row.seoTitle, seoDescription: row.seoDescription, gallery }
 }
 
 export async function getPublicBlogPost(slug: string, locale: SupportedLocale = defaultLocale): Promise<PublicBlogPostDetail | undefined> {

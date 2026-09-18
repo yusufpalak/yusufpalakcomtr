@@ -59,7 +59,7 @@ useSeoMeta({ title: () => t('about.seoTitle'), description: () => t('about.seoDe
         <article v-for="experience in content.experiences" :key="experience.id" class="timeline-card">
           <div class="timeline-card__marker" aria-hidden="true" />
           <div class="timeline-card__content">
-            <div class="timeline-card__heading"><div><p>{{ experience.company }}</p><h3>{{ experience.position }}</h3></div><time v-if="period(experience.startDate, experience.endDate, experience.isCurrent)">{{ period(experience.startDate, experience.endDate, experience.isCurrent) }}</time></div>
+            <div class="timeline-card__heading"><div class="timeline-card__identity"><img v-if="experience.logoUrl" :src="experience.logoUrl" :alt="experience.logoAlt" loading="lazy"><div><p>{{ experience.company }}</p><h3>{{ experience.position }}</h3></div></div><time v-if="period(experience.startDate, experience.endDate, experience.isCurrent)">{{ period(experience.startDate, experience.endDate, experience.isCurrent) }}</time></div>
             <div v-if="experience.employmentType || experience.location" class="timeline-card__meta"><span v-if="experience.employmentType">{{ employmentLabel(experience.employmentType) }}</span><span v-if="experience.location">{{ experience.location }}</span></div>
             <p v-if="experience.summary" class="managed-copy">{{ experience.summary }}</p>
             <p v-if="experience.responsibilities" class="managed-copy muted">{{ experience.responsibilities }}</p>
@@ -76,7 +76,7 @@ useSeoMeta({ title: () => t('about.seoTitle'), description: () => t('about.seoDe
         <article v-for="education in content.educations" :key="education.id" class="timeline-card">
           <div class="timeline-card__marker" aria-hidden="true" />
           <div class="timeline-card__content">
-            <div class="timeline-card__heading"><div><p>{{ education.school }}</p><h3>{{ [education.degree, education.department].filter(Boolean).join(' · ') || education.school }}</h3></div><time v-if="period(education.startDate, education.endDate, education.isCurrent)">{{ period(education.startDate, education.endDate, education.isCurrent) }}</time></div>
+            <div class="timeline-card__heading"><div class="timeline-card__identity"><img v-if="education.logoUrl" :src="education.logoUrl" :alt="education.logoAlt" loading="lazy"><div><p>{{ education.school }}</p><h3>{{ [education.degree, education.department].filter(Boolean).join(' · ') || education.school }}</h3></div></div><time v-if="period(education.startDate, education.endDate, education.isCurrent)">{{ period(education.startDate, education.endDate, education.isCurrent) }}</time></div>
             <p v-if="education.description" class="managed-copy">{{ education.description }}</p>
             <a v-if="education.url" :href="education.url" target="_blank" rel="noopener noreferrer" class="text-link">{{ t('about.viewSchool') }} <i class="bi bi-arrow-up-right" /></a>
           </div>
@@ -86,3 +86,9 @@ useSeoMeta({ title: () => t('about.seoTitle'), description: () => t('about.seoDe
     </section>
   </div>
 </template>
+
+<style scoped>
+.timeline-card__identity{display:flex;align-items:center;gap:.85rem;min-width:0}
+.timeline-card__identity>img{width:48px;height:48px;flex:none;object-fit:contain;padding:.35rem;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.timeline-card__identity>div{min-width:0}
+</style>

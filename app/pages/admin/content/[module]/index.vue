@@ -26,20 +26,24 @@ const resolvedFormConfig = getAdminContentForm(moduleSlug)
 if (!resolvedModuleInfo || !resolvedFormConfig) throw createError({ statusCode: 404, statusMessage: 'İçerik modülü bulunamadı' })
 const moduleInfo = resolvedModuleInfo
 const formConfig = resolvedFormConfig
-const hasRelationFields = formConfig.fields.some(field => field.type === 'relation' || field.type === 'relation-multiple')
-const { data: relationResponse } = await useFetch(`/api/admin/content-options/${moduleSlug}`, { immediate: hasRelationFields })
+const hasRelationFields = formConfig.fields.some(field => field.type === 'relation' || field.type === 'relation-multiple' || field.type === 'media')
+const hasMediaFields = formConfig.fields.some(field => field.type === 'media')
+const { data: relationResponse, refresh: refreshRelationOptions } = await useFetch(`/api/admin/content-options/${moduleSlug}`, { immediate: hasRelationFields })
 const relationOptions = computed(() => (relationResponse.value?.data || {}) as Record<string, Array<{ label: string, value: string }>>)
-const formFields = computed(() => formConfig.fields.map(field => (field.type === 'relation' || field.type === 'relation-multiple') ? { ...field, options: relationOptions.value[field.key] || [] } : field))
+const formFields = computed(() => formConfig.fields.map(field => (field.type === 'relation' || field.type === 'relation-multiple' || field.type === 'media') ? { ...field, options: relationOptions.value[field.key] || [] } : field))
 const isBlogModule = moduleSlug === 'blog-posts'
+const isSiteSettingsModule = moduleSlug === 'site-settings'
 const blogCommonFields = computed(() => formFields.value.filter(field => !blogLocalizedFieldKeys.includes(field.key)))
 
 const { data, refresh, status } = await useFetch(`/api/admin/content/${moduleSlug}`)
 const records = computed(() => (data.value?.data || []) as AdminRecord[])
+const profileRecord = computed(() => records.value.find(record => record.data.key === 'profile') || null)
+const listRecords = computed(() => isSiteSettingsModule ? records.value.filter(record => !['profile', 'homepage.heroImage'].includes(String(record.data.key))) : records.value)
 const query = ref('')
 const filteredRecords = computed(() => {
   const needle = query.value.trim().toLocaleLowerCase('tr')
-  if (!needle) return records.value
-  return records.value.filter(record => `${record.title} ${record.subtitle} ${record.status}`.toLocaleLowerCase('tr').includes(needle))
+  if (!needle) return listRecords.value
+  return listRecords.value.filter(record => `${record.title} ${record.subtitle} ${record.status}`.toLocaleLowerCase('tr').includes(needle))
 })
 
 const form = reactive<Record<string, AdminFormValue>>({})
@@ -96,7 +100,8 @@ function openNew() {
   editingId.value = null
   feedback.value = null
   showForm.value = true
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (isSiteSettingsModule) nextTick(() => document.getElementById('site-custom-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  else window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function openEdit(record: AdminRecord) {
@@ -119,7 +124,8 @@ function openEdit(record: AdminRecord) {
   editingId.value = record.id
   feedback.value = null
   showForm.value = true
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (isSiteSettingsModule) nextTick(() => document.getElementById('site-custom-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  else window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 function closeForm() {
@@ -319,10 +325,21 @@ onBeforeUnmount(() => { if (heroPreview.value) URL.revokeObjectURL(heroPreview.v
     <nav class="admin-breadcrumb" aria-label="Sayfa yolu"><NuxtLink to="/admin/content">İçerik yönetimi</NuxtLink><i class="bi bi-chevron-right" /><span>{{ moduleInfo!.label }}</span></nav>
     <header class="admin-page-header admin-page-header--compact">
       <div class="admin-module-heading"><span class="admin-module-card__icon" :style="{ '--module-color': moduleInfo!.color }"><i :class="`bi ${moduleInfo!.icon}`" /></span><div><p class="admin-kicker">{{ moduleInfo!.group }}</p><h1>{{ moduleInfo!.label }}</h1><p>{{ moduleInfo!.description }}</p></div></div>
-      <div class="admin-header-actions"><NuxtLink v-if="moduleSlug === 'site-settings'" to="/admin/settings" class="admin-secondary-button"><i class="bi bi-sliders2" /> Genel ayarlar</NuxtLink><button class="admin-primary-button" @click="showForm ? closeForm() : openNew()"><i :class="showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'" />{{ showForm ? 'Formu kapat' : `${formConfig.singular} ekle` }}</button></div>
+      <div v-if="!isSiteSettingsModule" class="admin-header-actions"><button class="admin-primary-button" @click="showForm ? closeForm() : openNew()"><i :class="showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'" />{{ showForm ? 'Formu kapat' : `${formConfig.singular} ekle` }}</button></div>
     </header>
 
     <p v-if="feedback" :class="['admin-feedback', `is-${feedback.type}`]" :role="feedback.type === 'error' ? 'alert' : 'status'"><i :class="feedback.type === 'error' ? 'bi bi-exclamation-circle' : 'bi bi-check-circle'" />{{ feedback.text }}</p>
+
+    <template v-if="isSiteSettingsModule">
+      <div class="site-settings-intro"><span><i class="bi bi-info-circle" /></span><p><strong>Buradan neyi değiştirebilirsiniz?</strong> Aşağıdaki profil bilgileri doğrudan sitede görünür. Görsel, sosyal bağlantı ve sayfa metinlerini ilgili yönetim ekranından düzenleyin.</p></div>
+      <AdminSiteProfileEditor :record="profileRecord" :loading="status === 'pending'" @saved="refresh" />
+      <section class="site-settings-links" aria-label="Diğer görünüm ayarları">
+        <NuxtLink to="/admin/content/homepage"><span><i class="bi bi-image" /></span><strong>Ana sayfa görseli</strong><small>Portreyi yükle veya değiştir</small><i class="bi bi-arrow-up-right" /></NuxtLink>
+        <NuxtLink to="/admin/social-links"><span><i class="bi bi-share" /></span><strong>Sosyal bağlantılar</strong><small>İletişim ve altbilgi bağlantıları</small><i class="bi bi-arrow-up-right" /></NuxtLink>
+        <NuxtLink to="/admin/content/about"><span><i class="bi bi-person-lines-fill" /></span><strong>Hakkımda metinleri</strong><small>Biyografi ve içerik bölümleri</small><i class="bi bi-arrow-up-right" /></NuxtLink>
+      </section>
+      <div class="site-settings-advanced-heading"><div><p class="admin-kicker">İSTEĞE BAĞLI</p><h2>Teknik ayarlar</h2><p>Özel anahtar/değer kayıtları. Yeni bir anahtar eklemek onu sitede otomatik olarak göstermez.</p></div><button class="admin-secondary-button" @click="showForm ? closeForm() : openNew()"><i :class="showForm ? 'bi bi-x-lg' : 'bi bi-plus-lg'" />{{ showForm ? 'Formu kapat' : 'Teknik ayar ekle' }}</button></div>
+    </template>
 
     <section v-if="moduleSlug === 'homepage'" class="admin-panel admin-hero-manager">
       <div class="admin-panel__heading"><div><p class="admin-kicker">HERO GÖRSELİ</p><h2>Anasayfa portresi</h2></div><span class="admin-record-count">JPG, PNG, WebP veya AVIF · en fazla 8 MB</span></div>
@@ -338,8 +355,9 @@ onBeforeUnmount(() => { if (heroPreview.value) URL.revokeObjectURL(heroPreview.v
       </div>
     </section>
 
-    <form v-if="showForm" class="admin-panel admin-form-panel" @submit.prevent="save">
+    <form v-if="showForm" id="site-custom-form" class="admin-panel admin-form-panel" @submit.prevent="save">
       <div class="admin-panel__heading"><div><p class="admin-kicker">{{ editingId ? 'KAYDI DÜZENLE' : 'YENİ KAYIT' }}</p><h2>{{ editingId ? `${formConfig.singular} düzenle` : `${formConfig.singular} ekle` }}</h2></div></div>
+      <div v-if="hasMediaFields" class="admin-media-field-notice"><p>Görsel veya PDF eklemek için önce <NuxtLink to="/admin/media" target="_blank" rel="noopener noreferrer">Medya kütüphanesine</NuxtLink> yükleyin. Bu sekmeye döndüğünüzde listeyi yenileyin.</p><button type="button" class="admin-secondary-button" @click="refreshRelationOptions()"><i class="bi bi-arrow-clockwise" /> Medya listesini yenile</button></div>
       <template v-if="isBlogModule">
         <div class="admin-language-editor">
           <div class="admin-language-editor__intro"><div><p class="admin-kicker">DİL SÜRÜMLERİ</p><h3>Blog içeriği</h3><p>Her dilin başlık, slug, içerik ve SEO alanlarını ayrı yönetin.</p></div><span>{{ supportedLocales.length }} dil</span></div>
@@ -375,10 +393,10 @@ onBeforeUnmount(() => { if (heroPreview.value) URL.revokeObjectURL(heroPreview.v
     </form>
 
     <section class="admin-panel">
-      <div class="admin-panel__toolbar"><label class="admin-search"><i class="bi bi-search" /><input v-model="query" :aria-label="`${moduleInfo!.label} içinde ara`" placeholder="İçeriklerde ara…"></label><div class="admin-toolbar-info"><span><i class="bi bi-collection" /> {{ filteredRecords.length }} kayıt</span></div></div>
+      <div class="admin-panel__toolbar"><label class="admin-search"><i class="bi bi-search" /><input v-model="query" :aria-label="`${moduleInfo!.label} içinde ara`" :placeholder="isSiteSettingsModule ? 'Teknik ayarlarda ara…' : 'İçeriklerde ara…'"></label><div class="admin-toolbar-info"><span><i class="bi bi-collection" /> {{ filteredRecords.length }} kayıt</span></div></div>
       <div v-if="status === 'pending'" class="admin-empty"><i class="bi bi-arrow-repeat admin-spin" /><p>Kayıtlar yükleniyor…</p></div>
       <div v-else-if="filteredRecords.length" class="admin-table-wrap"><table class="admin-data-table"><thead><tr><th>İçerik</th><th>Durum</th><th>Son güncelleme</th><th><span class="sr-only">İşlemler</span></th></tr></thead><tbody><tr v-for="record in filteredRecords" :key="record.id"><td><span class="admin-row-icon"><i :class="`bi ${moduleInfo!.icon}`" /></span><div><a :href="detailHref(record)" class="admin-content-title">{{ record.title }}</a><small>{{ record.subtitle || formConfig.singular }}</small><span v-if="isBlogModule" class="admin-record-locales"><b v-for="locale in translatedLocales(record)" :key="locale.code">{{ locale.code.toLocaleUpperCase('tr-TR') }}</b></span></div></td><td><span class="admin-status"><i />{{ record.status }}</span></td><td>{{ formatDate(record.updatedAt) }}</td><td><div class="admin-row-actions"><button type="button" :aria-label="`${record.title} kaydını düzenle`" title="Düzenle" @click="openEdit(record)"><i class="bi bi-pencil" /></button><a :href="detailHref(record)" :aria-label="`${record.title} detayına git`" title="Detay"><i class="bi bi-arrow-right" /></a><button type="button" class="is-danger" :aria-label="`${record.title} kaydını sil`" title="Sil" @click="deleteTarget = record"><i class="bi bi-trash3" /></button></div></td></tr></tbody></table></div>
-      <div v-else class="admin-empty"><span class="admin-empty__icon"><i :class="`bi ${moduleInfo!.icon}`" /></span><h2>{{ query ? 'Aramanızla eşleşen kayıt yok' : `Henüz ${formConfig.singular} eklenmedi` }}</h2><p>{{ query ? 'Farklı bir arama ifadesi deneyin.' : 'İlk kaydı eklemek için üstteki ekle butonunu kullanın.' }}</p><button v-if="!query" class="admin-primary-button" @click="openNew"><i class="bi bi-plus-lg" /> İlk kaydı ekle</button></div>
+      <div v-else class="admin-empty"><span class="admin-empty__icon"><i :class="`bi ${moduleInfo!.icon}`" /></span><h2>{{ query ? 'Aramanızla eşleşen kayıt yok' : isSiteSettingsModule ? 'Özel teknik ayar yok' : `Henüz ${formConfig.singular} eklenmedi` }}</h2><p>{{ query ? 'Farklı bir arama ifadesi deneyin.' : isSiteSettingsModule ? 'Profil ve görsel ayarlarınız yukarıda yönetilir. Buraya yalnızca uygulamanın kullandığı ek teknik kayıtlar gelir.' : 'İlk kaydı eklemek için üstteki ekle butonunu kullanın.' }}</p><button v-if="!query && !isSiteSettingsModule" class="admin-primary-button" @click="openNew"><i class="bi bi-plus-lg" /> İlk kaydı ekle</button></div>
     </section>
 
     <div v-if="deleteTarget" class="admin-dialog-backdrop" @click.self="deleteTarget = null"><section class="admin-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-content-title"><span class="admin-dialog__icon"><i class="bi bi-trash3" /></span><h2 id="delete-content-title">Kayıt silinsin mi?</h2><p><strong>{{ deleteTarget.title }}</strong> kalıcı olarak silinecek.</p><div><button class="admin-secondary-button" :disabled="deleting" @click="deleteTarget = null">Vazgeç</button><button class="admin-danger-button" :disabled="deleting" @click="deleteRecord"><i :class="deleting ? 'bi bi-arrow-repeat admin-spin' : 'bi bi-trash3'" />{{ deleting ? 'Siliniyor…' : 'Evet, sil' }}</button></div></section></div>
