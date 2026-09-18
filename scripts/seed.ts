@@ -10,12 +10,14 @@ if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL zorunludur.')
 const client = postgres(process.env.DATABASE_URL)
 const db = drizzle(client)
 
-await db.insert(siteSettings).values({ key: 'profile', value: { name: 'Yusuf Palak', title: 'Full-Stack Developer', focus: ['Web geliştirme', 'Backend sistemleri', 'Veritabanı', 'DevOps'] } }).onConflictDoUpdate({ target: siteSettings.key, set: { value: { name: 'Yusuf Palak', title: 'Full-Stack Developer', focus: ['Web geliştirme', 'Backend sistemleri', 'Veritabanı', 'DevOps'] }, updatedAt: new Date() } })
+await db.insert(siteSettings).values({ key: 'profile', value: { name: 'Yusuf Palak', title: 'Full-Stack Developer', focus: ['Web geliştirme', 'Backend sistemleri', 'Veritabanı', 'DevOps'] } }).onConflictDoNothing({ target: siteSettings.key })
 
-const [skillCategory] = await db.insert(skillCategories).values({ name: 'Teknik', slug: 'teknik' }).onConflictDoUpdate({ target: skillCategories.slug, set: { name: 'Teknik' } }).returning()
+const [createdSkillCategory] = await db.insert(skillCategories).values({ name: 'Teknik', slug: 'teknik' }).onConflictDoNothing({ target: skillCategories.slug }).returning({ id: skillCategories.id })
+const skillCategoryId = createdSkillCategory?.id || (await db.select({ id: skillCategories.id }).from(skillCategories).where(eq(skillCategories.slug, 'teknik')).limit(1))[0]?.id
+if (!skillCategoryId) throw new Error('Yetenek kategorisi oluşturulamadı.')
 for (const name of ['.NET', 'SQL Server', 'JavaScript', 'TypeScript', 'Vue', 'Nuxt', 'Docker', 'PostgreSQL']) {
-  const existing = await db.select({ id: skills.id }).from(skills).where(and(eq(skills.name, name), eq(skills.categoryId, skillCategory!.id))).limit(1)
-  if (!existing.length) await db.insert(skills).values({ categoryId: skillCategory!.id, name, level: 'İleri' })
+  const existing = await db.select({ id: skills.id }).from(skills).where(and(eq(skills.name, name), eq(skills.categoryId, skillCategoryId))).limit(1)
+  if (!existing.length) await db.insert(skills).values({ categoryId: skillCategoryId, name, level: 'advanced' })
 }
 
 const blogSeed = [
@@ -25,18 +27,23 @@ const blogSeed = [
 ]
 
 for (const seed of blogSeed) {
-  const [category] = await db.insert(blogCategories).values({ name: seed.category, slug: seed.category.toLocaleLowerCase('tr').replace('ı', 'i') }).onConflictDoUpdate({ target: blogCategories.slug, set: { name: seed.category } }).returning()
-  await db.insert(blogPosts).values({ title: seed.title, slug: seed.slug, excerpt: seed.excerpt, content: seed.content, categoryId: category!.id, status: 'published', publishedAt: new Date(seed.date), readingMinutes: readingTime(seed.content) }).onConflictDoUpdate({ target: blogPosts.slug, set: { title: seed.title, excerpt: seed.excerpt, content: seed.content, categoryId: category!.id, status: 'published', publishedAt: new Date(seed.date), readingMinutes: readingTime(seed.content), updatedAt: new Date() } })
+  const categorySlug = seed.category.toLocaleLowerCase('tr').replace('ı', 'i')
+  const [createdCategory] = await db.insert(blogCategories).values({ name: seed.category, slug: categorySlug }).onConflictDoNothing({ target: blogCategories.slug }).returning({ id: blogCategories.id })
+  const categoryId = createdCategory?.id || (await db.select({ id: blogCategories.id }).from(blogCategories).where(eq(blogCategories.slug, categorySlug)).limit(1))[0]?.id
+  if (!categoryId) throw new Error(`Blog kategorisi oluşturulamadı: ${categorySlug}`)
+  await db.insert(blogPosts).values({ title: seed.title, slug: seed.slug, excerpt: seed.excerpt, content: seed.content, categoryId, status: 'published', publishedAt: new Date(seed.date), readingMinutes: readingTime(seed.content) }).onConflictDoNothing({ target: blogPosts.slug })
 }
 
 if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
-  if (process.env.ADMIN_PASSWORD.length < 12) throw new Error('ADMIN_PASSWORD en az 12 karakter olmalıdır.')
   const email = process.env.ADMIN_EMAIL.toLowerCase()
   const existing = await db.select({ id: adminUsers.id }).from(adminUsers).where(eq(adminUsers.email, email))
-  const passwordHash = await argon2.hash(process.env.ADMIN_PASSWORD, { type: argon2.argon2id })
-  if (!existing.length) await db.insert(adminUsers).values({ email, passwordHash })
-  else await db.update(adminUsers).set({ passwordHash, failedAttempts: 0, lockedUntil: null, updatedAt: new Date() }).where(eq(adminUsers.id, existing[0]!.id))
-  console.log('Admin hesabı hazır.')
+  if (!existing.length) {
+    if (process.env.ADMIN_PASSWORD.length < 12) throw new Error('ADMIN_PASSWORD en az 12 karakter olmalıdır.')
+    const passwordHash = await argon2.hash(process.env.ADMIN_PASSWORD, { type: argon2.argon2id })
+    await db.insert(adminUsers).values({ email, passwordHash })
+    console.log('Admin hesabı oluşturuldu.')
+  }
+  else console.log('Admin hesabı zaten mevcut; parola değiştirilmedi.')
 } else console.log('ADMIN_EMAIL/ADMIN_PASSWORD yok; admin oluşturulmadı.')
 
 await client.end()
