@@ -17,6 +17,7 @@ import {
   homepageSections,
   mediaFiles,
   projectCategories,
+  projectImages,
   projectTechnologies,
   projects,
   siteSettings,
@@ -159,8 +160,14 @@ async function hydrateRelationValues(module: string, records: AdminContentRecord
   if (!records.length) return records
   const ids = records.map(record => record.id)
   if (module === 'projects') {
-    const rows = await useDb().select().from(projectTechnologies).where(inArray(projectTechnologies.projectId, ids))
-    for (const record of records) record.data.technologyIds = rows.filter(row => row.projectId === record.id).map(row => row.technologyId)
+    const [technologies, images] = await Promise.all([
+      useDb().select().from(projectTechnologies).where(inArray(projectTechnologies.projectId, ids)),
+      useDb().select({ projectId: projectImages.projectId, mediaId: projectImages.mediaId }).from(projectImages).where(inArray(projectImages.projectId, ids)).orderBy(asc(projectImages.sortOrder), asc(projectImages.createdAt)),
+    ])
+    for (const record of records) {
+      record.data.technologyIds = technologies.filter(row => row.projectId === record.id).map(row => row.technologyId)
+      record.data.galleryMediaIds = images.filter(row => row.projectId === record.id).map(row => row.mediaId)
+    }
   }
   if (module === 'blog-posts') {
     const rows = await useDb().select().from(blogPostTags).where(inArray(blogPostTags.postId, ids))
@@ -286,6 +293,8 @@ function extractManyRelations(module: string, values: Record<string, unknown>) {
   if (module === 'projects') {
     relations.technologyIds = Array.isArray(values.technologyIds) ? values.technologyIds as string[] : []
     delete values.technologyIds
+    relations.galleryMediaIds = Array.isArray(values.galleryMediaIds) ? values.galleryMediaIds as string[] : []
+    delete values.galleryMediaIds
   }
   if (module === 'blog-posts') {
     relations.tagIds = Array.isArray(values.tagIds) ? values.tagIds as string[] : []
@@ -299,6 +308,8 @@ async function syncManyRelations(module: string, id: string, relations: Record<s
   if (module === 'projects') {
     await db.delete(projectTechnologies).where(eq(projectTechnologies.projectId, id))
     if (relations.technologyIds?.length) await db.insert(projectTechnologies).values(relations.technologyIds.map(technologyId => ({ projectId: id, technologyId })))
+    await db.delete(projectImages).where(eq(projectImages.projectId, id))
+    if (relations.galleryMediaIds?.length) await db.insert(projectImages).values(relations.galleryMediaIds.map((mediaId, sortOrder) => ({ projectId: id, mediaId, sortOrder })))
   }
   if (module === 'blog-posts') {
     await db.delete(blogPostTags).where(eq(blogPostTags.postId, id))
@@ -310,7 +321,8 @@ async function assertMediaReferencesExist(module: string, values: Record<string,
   const { form } = getContentAdapter(module)
   const fields = form.fields.filter(field => field.type === 'media' && typeof values[field.key] === 'string')
   if (!fields.length) return
-  const ids = fields.map(field => values[field.key] as string)
+  const galleryIds = module === 'projects' && Array.isArray(values.galleryMediaIds) ? values.galleryMediaIds as string[] : []
+  const ids = [...fields.map(field => values[field.key] as string), ...galleryIds]
   const rows = await useDb().select({ id: mediaFiles.id, mimeType: mediaFiles.mimeType }).from(mediaFiles).where(inArray(mediaFiles.id, ids))
   const byId = new Map(rows.map(row => [row.id, row.mimeType]))
   for (const field of fields) {
@@ -318,6 +330,9 @@ async function assertMediaReferencesExist(module: string, values: Record<string,
     if (!mimeType || field.mediaKind === 'pdf' && mimeType !== 'application/pdf' || field.mediaKind === 'image' && !mimeType.startsWith('image/')) {
       throw new z.ZodError([{ code: 'custom', path: [field.key], message: `${field.label} için geçerli bir dosya seçin.` }])
     }
+  }
+  for (const id of galleryIds) {
+    if (!byId.get(id)?.startsWith('image/')) throw new z.ZodError([{ code: 'custom', path: ['galleryMediaIds'], message: 'Galeri için geçerli bir görsel seçin.' }])
   }
 }
 
@@ -365,7 +380,7 @@ export async function getContentRelationOptions(module: string) {
       db.select({ label: projectCategories.name, value: projectCategories.id }).from(projectCategories).orderBy(asc(projectCategories.name)),
       db.select({ label: technologies.name, value: technologies.id }).from(technologies).orderBy(asc(technologies.name)),
     ])
-    return { categoryId: categories, technologyIds: technologyOptions, ...mediaOptions }
+    return { categoryId: categories, technologyIds: technologyOptions, galleryMediaIds: mediaOptions.coverMediaId || [], ...mediaOptions }
   }
   if (module === 'blog-posts') {
     const [categories, tagOptions] = await Promise.all([

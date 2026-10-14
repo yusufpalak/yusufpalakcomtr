@@ -136,6 +136,7 @@ export const adminContentForms: Record<string, AdminContentForm> = {
       { key: 'summary', label: 'Kısa özet', type: 'textarea', required: true, wide: true },
       { key: 'content', label: 'Proje içeriği', type: 'textarea', required: true, wide: true },
       { key: 'coverMediaId', label: 'Kapak görseli', type: 'media', mediaKind: 'image', wide: true, help: 'Önce Medya kütüphanesine yükleyin; ardından burada seçin.' },
+      { key: 'galleryMediaIds', label: 'Proje galerisi', type: 'relation-multiple', relationModule: 'media', wide: true },
       { key: 'categoryId', label: 'Kategori', type: 'relation', relationModule: 'project-categories' },
       { key: 'technologyIds', label: 'Teknolojiler', type: 'relation-multiple', relationModule: 'technologies', wide: true, help: 'Birden fazla seçim için Ctrl (Windows) veya Command (macOS) tuşunu kullanın.' },
       { key: 'liveUrl', label: 'Canlı bağlantı', type: 'url' },

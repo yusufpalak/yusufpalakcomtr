@@ -2,6 +2,7 @@ node_modules
 .nuxt
 .output
 .env
+.data
 uploads
 playwright-report
 test-results

@@ -32,7 +32,20 @@ const { data: relationResponse, refresh: refreshRelationOptions } = await useFet
 const relationOptions = computed(() => (relationResponse.value?.data || {}) as Record<string, Array<{ label: string, value: string }>>)
 const formFields = computed(() => formConfig.fields.map(field => (field.type === 'relation' || field.type === 'relation-multiple' || field.type === 'media') ? { ...field, options: relationOptions.value[field.key] || [] } : field))
 const isBlogModule = moduleSlug === 'blog-posts'
+const isProjectModule = moduleSlug === 'projects'
 const isSiteSettingsModule = moduleSlug === 'site-settings'
+const galleryOptions = computed(() => relationOptions.value.galleryMediaIds || [])
+const availableGalleryOptions = computed(() => galleryOptions.value.filter(option => !galleryMediaIds.value.includes(option.value)))
+const galleryMediaIds = computed(() => Array.isArray(form.galleryMediaIds) ? form.galleryMediaIds : [])
+const galleryChoice = ref('')
+function addGalleryImage() {
+  if (!galleryOptions.value.some(option => option.value === galleryChoice.value) || galleryMediaIds.value.includes(galleryChoice.value)) return
+  form.galleryMediaIds = [...galleryMediaIds.value, galleryChoice.value]
+  galleryChoice.value = ''
+}
+function removeGalleryImage(id: string) {
+  form.galleryMediaIds = galleryMediaIds.value.filter(value => value !== id)
+}
 const blogCommonFields = computed(() => formFields.value.filter(field => !blogLocalizedFieldKeys.includes(field.key)))
 
 const { data, refresh, status } = await useFetch(`/api/admin/content/${moduleSlug}`)
@@ -92,6 +105,7 @@ function resetBlogTranslations() {
 
 function resetFormValues() {
   for (const field of formFields.value) form[field.key] = fieldDefault(field)
+  galleryChoice.value = ''
   if (isBlogModule) resetBlogTranslations()
 }
 
@@ -106,6 +120,7 @@ function openNew() {
 
 function openEdit(record: AdminRecord) {
   for (const field of formFields.value) form[field.key] = editValue(field, record.data[field.key])
+  galleryChoice.value = ''
   if (isBlogModule) {
     const translations = record.data.translations && typeof record.data.translations === 'object' && !Array.isArray(record.data.translations)
       ? record.data.translations as Record<string, unknown>
@@ -387,7 +402,19 @@ onBeforeUnmount(() => { if (heroPreview.value) URL.revokeObjectURL(heroPreview.v
         </div>
       </template>
       <div v-else class="admin-form-grid">
-        <AdminContentField v-for="field in formFields" :key="field.key" v-model="form[field.key]" :field="field" />
+        <AdminContentField v-for="field in formFields.filter(field => field.key !== 'galleryMediaIds')" :key="field.key" v-model="form[field.key]" :field="field" />
+      </div>
+      <div v-if="isProjectModule" class="admin-project-gallery">
+        <h3>Proje galerisi</h3>
+        <p>Kapak görselinden ayrı olarak proje sayfasının altında gösterilir. Kaldırdığınız görseller kayıt sırasında galeriden çıkarılır; medya kütüphanesindeki dosyalar silinmez.</p>
+        <ul v-if="galleryMediaIds.length" class="admin-project-gallery__list">
+          <li v-for="id in galleryMediaIds" :key="id">
+            <img :src="`/api/public/media/${id}`" alt="Galeri görseli önizlemesi">
+            <span>{{ galleryOptions.find(option => option.value === id)?.label || id }}</span>
+            <button type="button" class="admin-secondary-button is-danger-text" :aria-label="`${galleryOptions.find(option => option.value === id)?.label || id} görselini kaldır`" @click="removeGalleryImage(id)">Kaldır</button>
+          </li>
+        </ul>
+        <div class="admin-project-gallery__add"><select v-model="galleryChoice" aria-label="Galeriye eklenecek görsel"><option value="">Görsel seçin</option><option v-for="option in availableGalleryOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select><button type="button" class="admin-secondary-button" :disabled="!galleryChoice" @click="addGalleryImage">Galeriye ekle</button></div>
       </div>
       <div class="admin-form-actions"><button type="button" class="admin-secondary-button" @click="closeForm">Vazgeç</button><button class="admin-primary-button" :disabled="saving"><i :class="saving ? 'bi bi-arrow-repeat admin-spin' : 'bi bi-check2'" />{{ saving ? 'Kaydediliyor…' : editingId ? 'Değişiklikleri kaydet' : 'Kaydı ekle' }}</button></div>
     </form>
@@ -402,3 +429,15 @@ onBeforeUnmount(() => { if (heroPreview.value) URL.revokeObjectURL(heroPreview.v
     <div v-if="deleteTarget" class="admin-dialog-backdrop" @click.self="deleteTarget = null"><section class="admin-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-content-title"><span class="admin-dialog__icon"><i class="bi bi-trash3" /></span><h2 id="delete-content-title">Kayıt silinsin mi?</h2><p><strong>{{ deleteTarget.title }}</strong> kalıcı olarak silinecek.</p><div><button class="admin-secondary-button" :disabled="deleting" @click="deleteTarget = null">Vazgeç</button><button class="admin-danger-button" :disabled="deleting" @click="deleteRecord"><i :class="deleting ? 'bi bi-arrow-repeat admin-spin' : 'bi bi-trash3'" />{{ deleting ? 'Siliniyor…' : 'Evet, sil' }}</button></div></section></div>
   </div>
 </template>
+
+<style scoped>
+.admin-project-gallery{grid-column:1/-1;margin:1.5rem 0}
+.admin-project-gallery h3{margin:0 0 .5rem}
+.admin-project-gallery p{color:var(--admin-muted);font-size:.85rem}
+.admin-project-gallery__list{list-style:none;padding:0;display:grid;gap:.75rem}
+.admin-project-gallery__list li{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.admin-project-gallery__list img{width:80px;height:60px;object-fit:cover;border-radius:8px}
+.admin-project-gallery__list span{flex:1;min-width:160px;overflow-wrap:anywhere}
+.admin-project-gallery__add{display:flex;gap:.75rem;flex-wrap:wrap}
+.admin-project-gallery__add select{min-width:200px;flex:1}
+</style>
