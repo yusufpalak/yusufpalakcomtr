@@ -1,58 +1,388 @@
-# Yusuf Palak — Kişisel Web Sitesi
+# yusufpalak.com.tr
 
-Nuxt 4, Vue 3, TypeScript, Nuxt UI, PostgreSQL ve Drizzle ile geliştirilen SSR kişisel marka ve içerik yönetim sistemi.
+Kişisel portfolyo ve içerik yönetim platformum.
+
+Bu projeyi yalnızca özgeçmişimi sergileyen statik bir web sitesi olarak değil; projelerimi, deneyimlerimi, teknik içeriklerimi ve geliştirdiğim ürünleri tek bir yerden yönetebileceğim gerçek bir web uygulaması olarak geliştirdim.
+
+🌐 **Canlı:** [yusufpalak.com.tr](https://yusufpalak.com.tr)  
+💼 **LinkedIn:** [linkedin.com/in/yusufpalak](https://www.linkedin.com/in/yusufpalak/)
+
+---
+
+## Hakkımda
+
+Ben **Yusuf Palak**, web tabanlı uygulamalar, SaaS ürünleri, kurumsal yazılımlar ve veritabanı ağırlıklı sistemler geliştiren bir yazılım geliştiriciyim.
+
+Backend, frontend ve veritabanı taraflarında çalışıyor; bir ürünün fikir aşamasından canlı ortama alınmasına kadar olan sürecin farklı noktalarında aktif rol alıyorum.
+
+Aynı zamanda **Kernela Soft** bünyesinde ürün geliştirme çalışmalarımı sürdürüyorum. Burada özellikle restoran ve kafe işletmelerine yönelik geliştirdiğimiz **DineX** başta olmak üzere farklı yazılım projeleri üzerinde çalışıyorum.
+
+Bu site de hem çalışmalarımı sergilediğim hem de kullandığım teknolojileri gerçek bir ürün üzerinde uyguladığım projelerden biri.
+
+---
+
+## Proje hakkında
+
+İlk hedef basit bir kişisel portfolyo oluşturmaktı. Ancak proje zaman içerisinde kendi yönetim paneli, içerik sistemi ve medya altyapısı bulunan daha kapsamlı bir uygulamaya dönüştü.
+
+Site içerisindeki içeriklerin büyük bölümü kaynak kod değiştirilmeden yönetim paneli üzerinden düzenlenebiliyor.
+
+Başlıca özellikler:
+
+- Kişisel portfolyo ve özgeçmiş
+- Proje yönetimi
+- İş deneyimi ve eğitim yönetimi
+- Sertifika yönetimi
+- Blog altyapısı
+- Yönetim paneli
+- Medya kütüphanesi
+- İletişim formu ve admin gelen kutusu
+- Türkçe ve İngilizce içerik yönetimi
+- Blog içerikleri için çeviri desteği
+- SEO alanlarının içerik bazlı yönetimi
+- Local ve S3 uyumlu dosya depolama
+- Responsive tasarım
+- Docker ile production deployment
+
+---
+
+## Yönetim paneli
+
+Projenin önemli parçalarından biri kendi geliştirdiğim yönetim paneli.
+
+Portfolyo sitesinde görünen içerikleri doğrudan veritabanından değiştirmek yerine `/admin` üzerinden yönetebiliyorum.
+
+Panel üzerinden:
+
+- projeler,
+- blog yazıları,
+- deneyimler,
+- eğitimler,
+- sertifikalar,
+- medya dosyaları,
+- site içerikleri,
+- iletişim mesajları
+
+yönetilebiliyor.
+
+Bu yapı sayesinde site yalnızca kişisel bir landing page olmaktan çıkıp küçük ölçekli bir **CMS** mantığında çalışıyor.
+
+---
+
+## Blog sistemi
+
+Site içerisinde kendi blog altyapım bulunuyor.
+
+Her blog yazısı için ayrı olarak:
+
+- başlık,
+- slug,
+- özet,
+- içerik,
+- kapak görseli,
+- okuma süresi,
+- SEO başlığı,
+- SEO açıklaması
+
+yönetilebiliyor.
+
+Blog yapısı çoklu dil desteğiyle birlikte çalışıyor.
+
+Türkçe içerikler ana içerik olarak tutulurken İngilizce karşılıkları ayrıca yönetilebiliyor.
+
+Bir yazının İngilizce versiyonu bulunmuyorsa İngilizce blog içerisinde yayınlanmıyor.
+
+---
+
+## Çoklu dil desteği
+
+Public site Türkçe ve İngilizce olarak çalışıyor.
+
+Türkçe site standart URL yapısını kullanırken İngilizce içerikler:
+
+```text
+/en/...
+```
+
+altında yayınlanıyor.
+
+Blog içeriklerinde sadece arayüz değil, içeriğin kendisi de dile göre ayrı yönetiliyor.
+
+Örneğin aynı blog yazısının:
+
+- başlığı,
+- slug'ı,
+- özeti,
+- içeriği,
+- SEO alanları
+
+Türkçe ve İngilizce için farklı olabiliyor.
+
+---
+
+## LibreTranslate entegrasyonu
+
+Blog içeriklerini İngilizceye aktarırken süreci hızlandırmak için **LibreTranslate** entegrasyonu ekledim.
+
+Yönetim panelinde Türkçe içerik tamamlandıktan sonra İngilizce sekmesinden otomatik çeviri yapılabiliyor.
+
+Sistem:
+
+- başlığı,
+- özeti,
+- içeriği,
+- SEO alanlarını
+
+çeviriyor ve hedef dile uygun slug ile okuma süresini yeniden oluşturuyor.
+
+Otomatik çeviri doğrudan yayınlanmıyor. Önce editöre aktarılıyor ve gerekli kontroller yapıldıktan sonra kaydediliyor.
+
+Böylece otomasyonu kullanırken içerik üzerindeki manuel kontrolü koruyorum.
+
+---
+
+## Medya kütüphanesi
+
+Yönetim panelinde merkezi bir medya kütüphanesi bulunuyor.
+
+Desteklenen dosyalar:
+
+- JPG
+- PNG
+- WebP
+- AVIF
+- PDF
+
+Yüklenen görseller otomatik olarak **WebP** formatına dönüştürülüyor.
+
+Medya kütüphanesindeki dosyalar proje, blog ve sertifika içeriklerinde tekrar kullanılabiliyor.
+
+Ayrıca kullanımda olan bir dosyanın yanlışlıkla silinmesini engelleyen kontroller bulunuyor.
+
+---
+
+## Dosya depolama
+
+Dosya sistemi geliştirme ve production ortamlarına göre farklı depolama yöntemlerini destekliyor.
+
+### Local Storage
+
+Yerel geliştirme sırasında dosyalar uygulamanın kendi storage alanında tutulabiliyor.
+
+### S3 Storage
+
+Production ortamında ise AWS S3 veya S3 uyumlu object storage servisleri kullanılabiliyor.
+
+Uygulama aynı zamanda daha önce local storage üzerinde oluşturulan dosyaları kullanmaya devam edebilecek şekilde tasarlandı.
+
+Bu sayede storage altyapısı değiştirildiğinde mevcut içeriklerin tamamen taşınması zorunlu değil.
+
+---
+
+## İletişim sistemi
+
+Sitedeki iletişim formundan gönderilen mesajlar veritabanına kaydediliyor.
+
+Mesajlar yönetim panelindeki gelen kutusu üzerinden görüntülenebiliyor.
+
+Bu sayede iletişim formu harici bir form servisine bağımlı olmadan uygulamanın kendi altyapısı içerisinde çalışıyor.
+
+---
+
+## Eski portfolyo verilerinin taşınması
+
+Bu projeden önce kullandığım statik portfolyo sitesindeki gerçek içerikleri yeni sisteme taşımak için ayrıca bir migration/import script'i geliştirdim.
+
+Script eski portfolyo arşivinden:
+
+- eğitim kayıtlarını,
+- kariyer bilgilerini,
+- okul projelerini,
+- proje görsellerini,
+- sertifikaları,
+- sertifika belgelerini
+
+tespit ederek yeni sisteme aktarabiliyor.
+
+Eski tema içerisindeki demo içerikler aktarılmıyor.
+
+Ayrıca mevcut yönetim paneli kayıtlarının veya daha önce yüklenmiş medyaların üzerine yazılmıyor.
+
+Bu araç özellikle eski statik yapıyı yeni veritabanı tabanlı sisteme geçirirken manuel veri girişini azaltmak için geliştirildi.
+
+---
+
+## Portfolyo seed sistemi
+
+Projede başlangıç verilerini oluşturmak için ayrı bir seed yapısı bulunuyor.
+
+```bash
+pnpm db:seed:content
+```
+
+Seed işlemi portfolyonun başlangıç verilerini oluşturuyor.
+
+Bunlar arasında:
+
+- hakkımda içeriği,
+- eğitimler,
+- deneyimler,
+- sertifikalar,
+- projeler,
+- DineX,
+- Kernela Soft,
+- site istatistikleri
+
+yer alıyor.
+
+Seed işlemi tekrar çalıştırılabilecek şekilde tasarlandı ve mevcut kullanıcı verilerini gereksiz yere ezmiyor.
+
+---
+
+## Öne çıkan teknik detaylar
+
+Bu projede özellikle içerik yönetimi ve sürdürülebilirlik tarafına önem verdim.
+
+### Dinamik içerik yapısı
+
+Portfolyo içeriğinin önemli bölümü frontend içerisine hard-code edilmek yerine veritabanından yönetiliyor.
+
+### Çoklu dil mimarisi
+
+Dil desteği yalnızca arayüz çevirisinden oluşmuyor. Blog gibi içeriklerin de locale bazlı karşılıkları bulunuyor.
+
+### Storage abstraction
+
+Medya sistemi local filesystem veya S3 üzerinde çalışabilecek şekilde tasarlandı.
+
+### Görsel optimizasyonu
+
+Yüklenen görseller WebP'ye dönüştürülerek depolama alanı ve web performansı açısından optimize ediliyor.
+
+### Güvenli medya silme
+
+Başka bir içerik tarafından kullanılan medya dosyasının doğrudan silinmesi engelleniyor.
+
+### İçerik migration araçları
+
+Eski sistemden yeni sisteme geçiş için proje özelinde import araçları bulunuyor.
+
+### Container deployment
+
+Uygulama Docker üzerinde production ortamına alınabilecek şekilde hazırlanmış durumda.
+
+---
+
+## Proje yapısı
+
+Uygulama genel olarak üç ana parçadan oluşuyor:
+
+```text
+Public Site
+    │
+    ├── Portfolio
+    ├── Projects
+    ├── Blog
+    ├── Certificates
+    └── Contact
+           │
+           ▼
+     Application / API
+           │
+    ┌──────┴──────┐
+    │             │
+PostgreSQL      Storage
+               Local / S3
+    │
+    ▼
+Admin Panel
+```
+
+Public site ziyaretçilere içerikleri sunarken yönetim paneli aynı verilerin yönetilmesini sağlıyor.
+
+---
 
 ## Kurulum
 
-Node 22+, pnpm 10+, PostgreSQL 16+ gerekir. Development compose servisi, yerel PostgreSQL kurulumlarıyla çakışmaması için host üzerinde `55432` portunu kullanır.
+Bağımlılıkları yüklemek için:
 
 ```bash
 pnpm install
-cp .env.example .env
-docker compose -f docker-compose.dev.yml up -d postgres
-pnpm db:push
-pnpm db:seed
+```
+
+Geliştirme ortamını başlatmak için:
+
+```bash
 pnpm dev
 ```
 
-İlk admin yalnızca `ADMIN_EMAIL` ve en az 12 karakterli `ADMIN_PASSWORD` tanımlanıp `pnpm db:seed` çalıştırıldığında idempotent biçimde oluşturulur. Parola loglanmaz.
+Veritabanı başlangıç içeriğini oluşturmak için:
 
-## Komutlar
+```bash
+pnpm db:seed:content
+```
 
-- `pnpm dev`, `pnpm build`, `pnpm start`
-- `pnpm db:generate`, `pnpm db:migrate`, `pnpm db:push` (yalnızca geliştirme), `pnpm db:seed`, `pnpm db:seed:content`, `pnpm db:studio`
-- `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`
+Docker image oluşturmak için:
 
-## Yapılandırma
+```bash
+docker build -t yusuf-palak .
+```
 
-Tüm değişkenler `.env.example` içindedir. Production'da güçlü `NUXT_SESSION_PASSWORD`, harici `DATABASE_URL` ve gerekirse S3 değerleri secret manager üzerinden verilir. İletişim mesajları veritabanına kaydedilir ve admin panelinin gelen kutusunda listelenir. E-posta bildirimi henüz etkin değildir; `.env.example` içindeki SMTP alanları tek başına e-posta gönderimi başlatmaz. S3 için endpoint, region, bucket ve anahtarlar; MinIO için ayrıca path-style açılır.
+Gerekli ortam değişkenlerinin örnekleri proje içerisindeki `.env.example` dosyasında bulunuyor.
 
-### Örnek portfolyo içeriği
+---
 
-`pnpm db:seed:content`, herkese açık [LinkedIn profilindeki](https://www.linkedin.com/in/yusufpalak/) doğrulanabilen bilgileri ve kullanıcının doğruladığı Kernela Soft kurucu ortaklığını temel alarak anasayfa/hakkımda bölümlerini, eğitimleri, sertifikaları, Kernela Soft deneyimini, Artemis Halı ve DineX içeriklerini ve otomatik istatistikleri ekler. Komut tekrar çalıştırılabilir; aynı anahtara/ada sahip mevcut kayıtları güncellemez. LinkedIn'de ayrıntısı görünmeyen iş deneyimi tarihleri, bireysel görev kapsamı ve görseller uydurulmaz. Sertifika tarihlerinde yalnızca ay/yıl bilindiğinden veritabanında ilgili ayın ilk günü kullanılır.
+## DineX
 
-Kullanıcının sağladığı eski statik site arşivi ayrıca `scripts/import-legacy-portfolio.ts` ile içe aktarılabilir: ZIP'i güvenli bir klasöre açın ve `STORAGE_DRIVER=local` ile `pnpm exec tsx scripts/import-legacy-portfolio.ts <açılmış-arşiv-kökü>` çalıştırın. Betik yalnızca doğrulanan kariyer/eğitim kayıtlarını, dört gerçek okul projesini ve eşleşen proje/sertifika görselleri ile PDF belgelerini alır; eski şablonun örnek içeriklerini atlar. Var olan yönetim paneli kayıtları ve dolu medya alanları korunur. İçe aktarılan dosyalar `.data/uploads` altında tutulur; bu klasörü yedekleyin. Yerel medyayı sonradan S3'e taşımak ayrı bir göç işlemidir.
+Portfolyoda yer verdiğim ana projelerden biri **DineX**.
 
-### Medya ve AWS S3
+DineX'i restoran ve kafelerin dijital operasyonlarını tek bir sistem altında toplamaya yönelik bir SaaS ürünü olarak geliştiriyorum.
 
-Yönetim panelindeki **Medya kütüphanesi** JPG, PNG, WebP, AVIF ve PDF yükler. Görseller WebP'ye dönüştürülür; yüklenen dosyalar proje/blog kapaklarında ve sertifikalarda seçilebilir. PDF dosyaları indirme olarak sunulur. Bir içerikte kullanılan dosya, önce o içerikten ayrılmadan silinemez.
+Proje başlangıçta QR menü yönetimi üzerine kurulurken zaman içerisinde farklı işletme ihtiyaçlarına yönelik modüllerle genişlemeye başladı.
 
-Yerel geliştirmede `STORAGE_DRIVER=local` ve `LOCAL_UPLOAD_DIR=.data/uploads` kullanılır. AWS S3'e geçmek için `STORAGE_DRIVER=s3` yapıp bölge ve bucket değerlerini tanımlayın. Uygulama `S3_REGION` / `S3_BUCKET` yerine mevcut `AWS_REGION` / `AWS_S3_BUCKET_NAME` adlarını da kabul eder. `S3_ACCESS_KEY` ile `S3_SECRET_KEY` birlikte verilebilir; ikisi de boşsa AWS SDK'nın varsayılan kimlik bilgisi zinciri (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` veya IAM rolü) kullanılır. Anahtarları kaynak koda koymayın. Gerçek AWS için `S3_ENDPOINT` boş ve `S3_FORCE_PATH_STYLE=false` kalır. Özel S3 uyumlu servislerde endpoint ve gerekirse path-style tanımlanır.
+DineX geliştirme sürecinde ürün tasarımı, frontend, backend, veritabanı mimarisi, deployment ve production altyapısı gibi farklı alanlarla doğrudan ilgileniyorum.
 
-Yeni S3 dosyaları aynı bucket içinde `yusufpalakcomtr/uploads/<dosya-id>.webp` veya `.pdf` anahtarıyla saklanır; ayrı bucket ya da başta `/` kullanılmaz. Önceden `uploads/*` altında saklanan S3 dosyaları da okunmaya devam eder. IAM kimliğine yeni dosyalar için `yusufpalakcomtr/uploads/*`, eski S3 dosyaları varsa ayrıca `uploads/*` nesnelerinde `s3:PutObject`, `s3:GetObject` ve `s3:DeleteObject` izinleri verin. Bucket özel kalabilir; dosyalar uygulamanın `/api/public/media/:id` yolu üzerinden sunulur. Önceden yerel yüklenen dosyalar sürücü değişse de yerel dizinden okunur; o dizini silmeyin.
+Bu nedenle DineX benim için yalnızca portfolyoya eklenmiş bir proje değil, aktif olarak geliştirdiğim bir ürün.
 
-## Dil desteği
+---
 
-Public site Türkçe ve İngilizce çalışır. Türkçe mevcut URL'leri kullanır; İngilizce sayfalar `/en/...` altında yayınlanır. Yönetim paneli locale rotalarından bilinçli olarak ayrılmıştır ve `/admin` altında kalır.
+## Kernela Soft
 
-Blog ekleme ve düzenleme ekranındaki dil sekmelerinde her yazının başlık, slug, özet, içerik, okuma süresi ve SEO alanları ayrı ayrı yönetilir. Türkçe ana sürümdür; diğer dil sürümleri etkinleştirildiklerinde kendi locale rotalarında yayınlanır. Çevirisi bulunmayan bir yazı o dilde listelenmez.
+**Kernela Soft**, yazılım ürünleri ve işletmelere özel dijital çözümler geliştirdiğimiz yapı.
 
-Türkçe içerik tamamlandıktan sonra diğer dil sekmelerindeki **LibreTranslate ile çevir** butonu başlık, özet, zengin metin içeriği ve dolu SEO alanlarını çevirir; hedef slug ile okuma süresini yeniden üretir. Sonuç yalnızca forma doldurulur, yayınlanmadan önce kontrol edilip kaydedilmelidir. Development compose içindeki yerel LibreTranslate yalnızca Türkçe ve İngilizce modellerini yükler ve `http://127.0.0.1:5500` adresinde çalışır. Farklı bir kurulum kullanmak için `NUXT_LIBRE_TRANSLATE_URL`; anahtar isteyen bir servis için ayrıca `NUXT_LIBRE_TRANSLATE_API_KEY` tanımlayın.
+Burada hem müşteri projeleri hem de kendi SaaS ürünlerimiz üzerinde çalışıyoruz.
 
-Yeni bir dil eklemek için `i18n/locales` altında mevcut dosyalardan biriyle aynı anahtarları taşıyan yeni bir JSON dosyası oluşturun ve `shared/i18n/locales.ts` içindeki merkezi dil listesine dil kodu, görünen ad, BCP 47 dil etiketi ve dosya adını ekleyin. Dil dosyalarının anahtar eşitliği testlerle doğrulanır; blog çeviri verisi aynı kaydın JSONB alanında tutulduğu için yeni bir veritabanı tablosu gerekmez.
+Web uygulamaları, yönetim sistemleri, dijital dönüşüm projeleri ve sektörel yazılım çözümleri geliştirdiğimiz başlıca alanlar arasında.
 
-## Deployment ve yedekleme
+Portfolyo sitesinde de zaman içerisinde Kernela Soft bünyesinde geliştirdiğim ve katkı sağladığım projeleri paylaşmaya devam ediyorum.
 
-`docker build -t yusuf-palak .` ile non-root multi-stage image üretilir. Production veritabanı ayrı/shared PostgreSQL olabilir. Migration deployment öncesi ayrı iş olarak çalıştırılır. Günlük `pg_dump`, object storage versioning ve şifreli uzak yedek önerilir.
+---
 
-Sorun giderme: 503 veritabanı yapılandırmasının eksik olduğunu, 401 oturum gerektiğini, 429 rate limit aşıldığını gösterir. Migration öncesi `DATABASE_URL` ve PostgreSQL health durumunu kontrol edin.
+## Neden bu projeyi geliştirdim?
+
+Bir geliştiricinin portfolyosunun yalnızca kullandığı teknolojileri listelemek yerine bunları gerçekten kullandığı bir proje olması gerektiğini düşünüyorum.
+
+Bu nedenle kendi portfolyo sitemi hazır bir tema üzerinde birkaç metin değiştirerek oluşturmak yerine;
+
+- veritabanı,
+- admin paneli,
+- authentication,
+- medya yönetimi,
+- çoklu dil,
+- içerik yönetimi,
+- object storage,
+- çeviri servisi,
+- Docker deployment
+
+gibi gerçek bir web uygulamasında ihtiyaç duyabileceğim parçaları kullanarak geliştirdim.
+
+Ortaya çıkan proje hem yaptığım işleri sergilediğim kişisel web sitem hem de geliştirme yaklaşımımı gösteren projelerden biri haline geldi.
+
+---
+
+## Yusuf Palak
+
+**Software Developer · Kernela Soft**
+
+🌐 [yusufpalak.com.tr](https://yusufpalak.com.tr)  
+💼 [LinkedIn](https://www.linkedin.com/in/yusufpalak/)
